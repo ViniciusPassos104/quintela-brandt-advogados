@@ -93,6 +93,17 @@ Para transformar o projeto em um site real:
 
 ## Publicação
 
+**No ar:** https://viniciuspassos104.github.io/quintela-brandt-advogados/
+
+Cada push na `main` publica o site no GitHub Pages pelo workflow `.github/workflows/deploy.yml`, que:
+
+1. faz o build com `SITE_URL` apontando para o endereço do Pages (canonical, Open Graph e sitemap saem corretos);
+2. roda a verificação de links e o lint de conteúdo;
+3. prefixa os caminhos internos com o subcaminho do repositório (`scripts/rebase.mjs`);
+4. publica o resultado.
+
+Para publicar em um domínio próprio, basta trocar `SITE_URL` e remover o passo de rebase (sem subcaminho, ele não faz nada).
+
 O site é estático: qualquer host de arquivos serve (Netlify, Cloudflare Pages, Vercel, S3). O arquivo `public/_headers` define:
 
 - os cabeçalhos de segurança que não podem ir em `<meta>` (`frame-ancestors`, `Permissions-Policy`);
