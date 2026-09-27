@@ -1,0 +1,48 @@
+---
+import Base from '@/layouts/Base.astro';
+import { AREAS } from '@/data/areas';
+---
+
+<Base title="Página não encontrada" description="O endereço acessado não existe ou mudou de lugar. Veja as áreas de atuação do escritório ou volte para a página inicial." noindex>
+  <section class="nf">
+    <div class="container nf__grid">
+      <p class="label label--accent">Erro 404</p>
+      <h1 class="nf__title">Este caminho <em>não leva</em> a lugar nenhum.</h1>
+      <p class="lead">
+        O endereço pode ter mudado ou sido digitado com algum erro. Estes, por outro lado, estão onde sempre estiveram:
+      </p>
+      <ul class="nf__links" role="list">
+        <li><a class="arrow-link" href="/"><span>Página inicial</span><span class="arrow" aria-hidden="true">→</span></a></li>
+        {AREAS.map((a) => <li><a class="arrow-link" href={`/atuacao/${a.slug}/`}><span>{a.h1}</span><span class="arrow" aria-hidden="true">→</span></a></li>)}
+        <li><a class="arrow-link" href="/contato/"><span>Contato</span><span class="arrow" aria-hidden="true">→</span></a></li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 80svh;
+    padding-top: calc(var(--header-h) + clamp(3rem, 8vw, 7rem));
+    padding-bottom: var(--section);
+  }
+  .nf__grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .nf__title {
+    font-family: var(--font-display);
+    font-size: var(--step-5);
+    line-height: 1.04;
+    letter-spacing: -0.022em;
+    max-width: 16ch;
+  }
+  .nf__title em {
+    color: var(--color-accent);
+  }
+  .nf__links {
+    display: grid;
+    gap: 0.1rem;
+    margin-top: var(--s-4);
+  }
+</style>

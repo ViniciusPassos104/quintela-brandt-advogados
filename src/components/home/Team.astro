@@ -1,0 +1,68 @@
+---
+import TeamCard from '@/components/TeamCard.astro';
+import { TEAM } from '@/data/team';
+import { SITE } from '@/data/site';
+---
+
+<section id="equipe" class="team section" data-section="equipe" aria-labelledby="team-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="label label--accent">04 · Equipe</p>
+      <div class="section-head__title stack" style="--stack: var(--s-5)">
+        <h2 id="team-title" class="h2" data-reveal="lines">Quem conduz o seu caso</h2>
+        <p class="lead">
+          Três advogados, cada um responsável pelas áreas que conhece de perto. Quem faz a reunião de análise é quem acompanha o caso até o
+          fim.
+        </p>
+      </div>
+    </div>
+
+    <div class="team__grid">
+      {TEAM.map((lawyer) => <TeamCard lawyer={lawyer} />)}
+    </div>
+
+    <div class="team__foot" data-reveal="fade">
+      <p class="small muted">
+        Com eles trabalha {SITE.intake.name}, da {SITE.intake.role.toLowerCase()} — é ela quem responde o seu primeiro contato e organiza a
+        agenda das reuniões.
+      </p>
+      <a class="arrow-link" href="/equipe/"><span>Conhecer a equipe</span><span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .team__grid {
+    display: grid;
+    gap: var(--s-8) var(--gutter);
+  }
+  .team__foot {
+    margin-top: var(--s-8);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4) var(--s-6);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--color-rule);
+  }
+  .team__foot p {
+    max-width: 60ch;
+  }
+  @media (min-width: 40rem) {
+    .team__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .team__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .team__grid > :global(:nth-child(2)) {
+      margin-top: var(--s-9);
+    }
+    .team__grid > :global(:nth-child(3)) {
+      margin-top: var(--s-6);
+    }
+  }
+</style>

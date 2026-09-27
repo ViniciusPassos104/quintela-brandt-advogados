@@ -1,0 +1,119 @@
+---
+import { AREAS } from '@/data/areas';
+import { TEAM } from '@/data/team';
+import { formatShort, isoDate, type Article } from '@/lib/articles';
+interface Props {
+  article: Article;
+  headingLevel?: 'h2' | 'h3';
+  showAuthor?: boolean;
+}
+const { article, headingLevel: H = 'h3', showAuthor = true } = Astro.props;
+const { data, id } = article;
+const area = AREAS.find((a) => a.slug === data.area);
+const author = TEAM.find((l) => l.slug === data.author);
+---
+
+<article class="article-row" data-area={data.area}>
+  <div class="article-row__meta small">
+    <time datetime={isoDate(data.published)}>{formatShort(data.published)}</time>
+    <span class="article-row__area">{area?.name}</span>
+  </div>
+  <div class="article-row__main">
+    <H class="article-row__title h3"><a href={`/artigos/${id}/`}>{data.title}</a></H>
+    <p class="article-row__desc small muted">{data.description}</p>
+  </div>
+  <div class="article-row__side small muted">
+    {showAuthor && <span>{author?.name}</span>}
+    <span>{data.readingTime} min de leitura</span>
+  </div>
+  <span class="article-row__arrow" aria-hidden="true">→</span>
+</article>
+
+<style>
+  .article-row {
+    position: relative;
+    display: grid;
+    gap: var(--s-3);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .article-row__meta {
+    display: flex;
+    gap: var(--s-3);
+    align-items: baseline;
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .article-row__area {
+    color: var(--color-accent);
+    font-weight: 560;
+  }
+  .article-row__main {
+    display: grid;
+    gap: var(--s-2);
+  }
+  .article-row__title {
+    font-size: var(--step-2);
+    max-width: 30ch;
+  }
+  .article-row__title a {
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+    transition:
+      background-size var(--dur-ui) var(--ease-out),
+      color var(--dur-micro) var(--ease-out);
+  }
+  .article-row__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .article-row:hover .article-row__title a,
+  .article-row__title a:focus-visible {
+    background-size: 100% 1px;
+  }
+  .article-row__desc {
+    max-width: 60ch;
+  }
+  .article-row__side {
+    display: flex;
+    gap: var(--s-3);
+    flex-wrap: wrap;
+  }
+  .article-row__side span + span::before {
+    content: '·';
+    margin-right: var(--s-3);
+  }
+  .article-row__arrow {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .article-row {
+      grid-template-columns: 11rem 1fr 12rem 2rem;
+      align-items: baseline;
+      column-gap: var(--gutter);
+      padding-block: var(--s-6);
+    }
+    .article-row__meta {
+      flex-direction: column;
+      gap: var(--s-1);
+    }
+    .article-row__side {
+      flex-direction: column;
+      gap: var(--s-1);
+    }
+    .article-row__side span + span::before {
+      content: none;
+    }
+    .article-row__arrow {
+      display: block;
+      justify-self: end;
+      color: var(--color-accent);
+      font-size: var(--step-1);
+      transition: transform var(--dur-ui) var(--ease-out);
+    }
+    .article-row:hover .article-row__arrow {
+      transform: translateX(4px);
+    }
+  }
+</style>

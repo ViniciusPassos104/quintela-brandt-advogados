@@ -1,0 +1,146 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import ArticleRow from '@/components/ArticleRow.astro';
+import NextStep from '@/components/NextStep.astro';
+import { AREAS } from '@/data/areas';
+import { getArticles } from '@/lib/articles';
+import { breadcrumbs, webPage, abs } from '@/lib/schema';
+
+const path = '/artigos/';
+const title = 'Artigos';
+const description =
+  'Artigos sobre inventário, divórcio, guarda, empresas familiares e imóveis, escritos pela equipe do Quintela Brandt em linguagem clara e com as normas citadas.';
+const crumbs = [{ name: 'Artigos', href: path }];
+const articles = await getArticles();
+const counts = Object.fromEntries(AREAS.map((a) => [a.slug, articles.filter((x) => x.data.area === a.slug).length]));
+---
+
+<Base
+  title={title}
+  description={description}
+  schema={[
+    webPage(path, title, description, 'CollectionPage', {
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: articles.map((a, i) => ({ '@type': 'ListItem', position: i + 1, url: abs(`/artigos/${a.id}/`) })),
+      },
+    }),
+    breadcrumbs(crumbs),
+  ]}
+>
+  <PageHeader
+    crumbs={crumbs}
+    label="Artigos"
+    title="Para entender *antes* de decidir."
+    lead="Textos da equipe sobre as dúvidas que mais aparecem nas reuniões — com as normas citadas e a data da última revisão. Informam; não substituem a análise do seu caso."
+  />
+
+  <section class="section articles-page" aria-label="Lista de artigos">
+    <div class="container">
+      <div class="filters" data-filters hidden>
+        <p class="label" id="filter-label">Filtrar por área</p>
+        <div class="filters__buttons" role="group" aria-labelledby="filter-label">
+          <button type="button" class="filter" aria-pressed="true" data-filter="todas">Todas <span class="filter__count">{articles.length}</span></button>
+          {
+            AREAS.filter((a) => counts[a.slug] > 0).map((a) => (
+              <button type="button" class="filter" aria-pressed="false" data-filter={a.slug}>
+                {a.name} <span class="filter__count">{counts[a.slug]}</span>
+              </button>
+            ))
+          }
+        </div>
+        <p class="visually-hidden" aria-live="polite" data-filter-status></p>
+      </div>
+
+      <div class="articles-page__list" data-articles>
+        {articles.map((a) => <ArticleRow article={a} headingLevel="h2" />)}
+      </div>
+    </div>
+  </section>
+
+  <NextStep
+    title="Leu e ficou com dúvida sobre o seu caso?"
+    text="Artigos explicam regras gerais; a sua situação tem detalhes que só aparecem numa conversa. O primeiro contato serve para isso."
+    cta="Conversar com o escritório"
+  />
+</Base>
+
+<style>
+  .filters {
+    display: grid;
+    gap: var(--s-3);
+    margin-bottom: var(--s-7);
+  }
+  .filters__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid var(--color-border);
+    font-size: var(--step--1);
+    font-weight: 560;
+    color: var(--color-text-2);
+    transition:
+      background-color var(--dur-micro) var(--ease-out),
+      color var(--dur-micro) var(--ease-out),
+      border-color var(--dur-micro) var(--ease-out);
+  }
+  .filter:hover {
+    border-color: var(--color-text);
+    color: var(--color-text);
+  }
+  .filter[aria-pressed='true'] {
+    background: var(--color-text);
+    border-color: var(--color-text);
+    color: var(--color-bg);
+  }
+  .filter__count {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.7;
+  }
+  .articles-page__list {
+    border-top: 1px solid var(--color-text);
+  }
+  .articles-page__list :global(.article-row[hidden]) {
+    display: none;
+  }
+</style>
+
+<script>
+  // Filtro progressivo: sem JS, a lista aparece completa e os botões ficam ocultos.
+  const root = document.querySelector<HTMLElement>('[data-filters]');
+  const list = document.querySelector<HTMLElement>('[data-articles]');
+  if (root && list) {
+    root.hidden = false;
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const status = root.querySelector<HTMLElement>('[data-filter-status]');
+    const rows = [...list.querySelectorAll<HTMLElement>('.article-row')];
+    const apply = (value: string) => {
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === value)));
+      let shown = 0;
+      rows.forEach((r) => {
+        const match = value === 'todas' || r.dataset.area === value;
+        r.hidden = !match;
+        if (match) shown++;
+      });
+      if (status) status.textContent = `${shown} ${shown === 1 ? 'artigo exibido' : 'artigos exibidos'}`;
+      // Guarda o filtro na URL quando o ambiente permite (em iframes restritos, não).
+      try {
+        const url = new URL(location.href);
+        if (value === 'todas') url.searchParams.delete('area');
+        else url.searchParams.set('area', value);
+        history.replaceState(null, '', url);
+      } catch {}
+    };
+    buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter!)));
+    const initial = new URLSearchParams(location.search).get('area');
+    if (initial && buttons.some((b) => b.dataset.filter === initial)) apply(initial);
+  }
+</script>

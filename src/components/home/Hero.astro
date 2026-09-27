@@ -1,0 +1,304 @@
+---
+import RiseText from '@/components/RiseText.astro';
+import { THREAD_H, THREAD_W, tangledPoints, toPath } from '@/lib/thread';
+
+const d = toPath(tangledPoints());
+---
+
+<section class="hero" data-hero data-section="inicio" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <p class="hero__eyebrow label fade-up" style="--d:120ms">
+      <span>Família, sucessões e patrimônio</span>
+      <span class="hero__eyebrow-sep" aria-hidden="true"></span>
+      <span>Belo Horizonte</span>
+    </p>
+
+    <RiseText as="h1" id="hero-title" class="hero__title display" text="Questões de família raramente são *só* de família." />
+
+    <div class="hero__body">
+      <p class="hero__lead lead fade-up" style="--d:420ms">
+        Um divórcio envolve uma empresa. Um inventário envolve imóveis. Uma sociedade envolve irmãos. Somos um escritório dedicado às
+        questões em que relações familiares e patrimônio se encontram — e começamos cada caso tentando enxergá-lo por inteiro.
+      </p>
+      <div class="hero__actions fade-up" style="--d:560ms">
+        <a class="btn btn--lg" href="/contato/">
+          <span class="btn-label">Conversar com o escritório</span><span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn--ghost btn--lg" href="#escritorio">Conhecer o escritório</a>
+      </div>
+    </div>
+
+    <dl class="hero__facts fade-up" style="--d:700ms">
+      <div><dt>Desde 2014</dt><dd>em Belo Horizonte</dd></div>
+      <div><dt>3 advogados</dt><dd>4 áreas de atuação</dd></div>
+      <div><dt>Presencial e por vídeo</dt><dd>para qualquer cidade</dd></div>
+    </dl>
+
+    <figure class="hero__thread" data-thread>
+      <svg viewBox={`0 0 ${THREAD_W} ${THREAD_H}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+        <line class="hero__guide" x1={THREAD_W / 2} y1="0" x2={THREAD_W / 2} y2={THREAD_H}></line>
+        <path class="hero__path" d={d} pathLength="1" data-thread-path></path>
+        <circle class="hero__knot" cx={THREAD_W / 2} cy="2.5" r="3.2"></circle>
+      </svg>
+      <figcaption class="hero__caption" data-thread-caption>
+        <span class="index">fig. 1</span>
+        <span>Toda questão tem um começo. Encontrá-lo é o primeiro trabalho.</span>
+      </figcaption>
+    </figure>
+
+    <a class="hero__next fade-up" style="--d:900ms" href="#escritorio">
+      <span class="index">01</span><span>O escritório</span><span class="arrow" aria-hidden="true">↓</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    padding-top: calc(var(--header-h) + clamp(2rem, 6vh, 4.5rem));
+    padding-bottom: var(--s-7);
+    display: flex;
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'eyebrow'
+      'title'
+      'body'
+      'thread'
+      'facts'
+      'next';
+    row-gap: var(--s-6);
+    align-content: start;
+  }
+  .hero__eyebrow {
+    grid-area: eyebrow;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.9rem;
+    color: var(--color-text-2);
+  }
+  .hero__eyebrow-sep {
+    display: none;
+    width: 2.5rem;
+    height: 1px;
+    background: var(--color-accent);
+  }
+  .hero__grid :global(.hero__title) {
+    grid-area: title;
+    font-size: var(--step-6);
+    max-width: 13ch;
+  }
+  .hero__grid :global(.hero__title em) {
+    color: var(--color-accent);
+  }
+  .hero__body {
+    grid-area: body;
+    display: grid;
+    gap: var(--s-6);
+  }
+  .hero__lead {
+    max-width: 34em;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+  .hero__facts {
+    grid-area: facts;
+    display: grid;
+    grid-template-columns: 1fr;
+    border-top: 1px solid var(--color-rule);
+  }
+  .hero__facts > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--color-rule);
+    font-size: var(--step--1);
+  }
+  .hero__facts dt {
+    font-weight: 600;
+  }
+  .hero__facts dd {
+    color: var(--color-muted);
+    text-align: right;
+  }
+  .hero__thread {
+    grid-area: thread;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    column-gap: var(--s-4);
+    --thread-p: 0;
+  }
+  .hero__thread svg {
+    grid-column: 2;
+    height: min(46svh, 24rem);
+    width: auto;
+    overflow: visible;
+  }
+  .hero__path {
+    fill: none;
+    stroke: var(--color-thread);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .hero__guide {
+    stroke: var(--color-rule);
+    stroke-width: 1;
+    stroke-dasharray: 2 6;
+    vector-effect: non-scaling-stroke;
+    opacity: calc(1 - var(--thread-p));
+  }
+  .hero__knot {
+    fill: var(--color-thread);
+  }
+  .hero__caption {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+    text-align: center;
+    justify-items: center;
+    max-width: 22rem;
+    padding-top: var(--s-4);
+    display: grid;
+    gap: 0.35rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--step--1);
+    line-height: 1.45;
+    color: var(--color-text-2);
+  }
+  .hero__caption .index {
+    font-style: normal;
+  }
+  .hero__next {
+    grid-area: next;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    justify-self: start;
+    min-height: 2.75rem;
+    font-size: var(--step--1);
+    font-weight: 560;
+    text-decoration: none;
+    color: var(--color-text-2);
+  }
+  .hero__next .arrow {
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+  .hero__next:hover {
+    color: var(--color-text);
+  }
+  .hero__next:hover .arrow {
+    transform: translateY(3px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: draw 1.9s var(--ease-inout) 200ms forwards;
+    }
+    .hero__knot {
+      animation: knot 600ms var(--ease-out) 150ms both;
+    }
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes knot {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (min-width: 40rem) {
+    .hero__eyebrow-sep {
+      display: block;
+    }
+    .hero__facts {
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: var(--gutter);
+    }
+    .hero__facts > div {
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .hero__facts dd {
+      text-align: left;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .hero {
+      padding-bottom: var(--s-6);
+    }
+    .hero__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+      grid-template-rows: auto auto auto 1fr auto;
+      grid-template-areas: none;
+      row-gap: var(--s-7);
+    }
+    .hero__eyebrow {
+      grid-column: 1 / span 8;
+      grid-row: 1;
+    }
+    .hero__grid :global(.hero__title) {
+      grid-column: 1 / span 9;
+      grid-row: 2;
+      max-width: 12.5ch;
+    }
+    .hero__body {
+      grid-column: 1 / span 6;
+      grid-row: 3;
+    }
+    .hero__facts {
+      grid-column: 1 / span 9;
+      grid-row: 5;
+      align-self: end;
+    }
+    .hero__next {
+      grid-column: 10 / span 3;
+      grid-row: 5;
+      align-self: end;
+      justify-self: end;
+    }
+    .hero__thread {
+      grid-column: 10 / span 3;
+      grid-row: 1 / span 4;
+      display: block;
+      height: auto;
+      min-height: 30rem;
+      margin-top: calc(-1 * clamp(2rem, 6vh, 4.5rem));
+    }
+    .hero__thread svg {
+      position: absolute;
+      inset: 0;
+      margin-inline: auto;
+      height: 100%;
+    }
+    .hero__caption {
+      position: absolute;
+      left: auto;
+      right: 0;
+      bottom: 8%;
+      padding-bottom: 0;
+      width: calc(50% - 1.25rem);
+      text-align: right;
+      justify-items: end;
+    }
+  }
+</style>

@@ -1,0 +1,93 @@
+---
+import RiseText from './RiseText.astro';
+interface Props {
+  crumbs: { name: string; href: string }[];
+  label?: string;
+  title: string;
+  lead?: string;
+  compact?: boolean;
+}
+const { crumbs, label, title, lead, compact = false } = Astro.props;
+---
+
+<header class:list={['page-header', { 'page-header--compact': compact }]}>
+  <div class="container page-header__grid">
+    <nav class="crumbs fade-up" style="--d:60ms" aria-label="Trilha de navegação">
+      <ol role="list">
+        <li><a href="/">Início</a></li>
+        {
+          crumbs.map((c, i) => (
+            <li>
+              {i === crumbs.length - 1 ? (
+                <span aria-current="page">{c.name}</span>
+              ) : (
+                <a href={c.href}>{c.name}</a>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+    {label && <p class="label label--accent page-header__label fade-up" style="--d:120ms">{label}</p>}
+    <RiseText as="h1" class="page-header__title" text={title} />
+    {lead && <p class="lead page-header__lead fade-up" style="--d:380ms">{lead}</p>}
+    <div class="page-header__aside fade-up" style="--d:480ms"><slot /></div>
+  </div>
+</header>
+
+<style>
+  .page-header {
+    padding-top: calc(var(--header-h) + clamp(2rem, 5vw, 4.5rem));
+    padding-bottom: clamp(3rem, 6vw, 6rem);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .page-header__grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .page-header__label {
+    margin-top: var(--s-5);
+  }
+  .page-header__grid :global(.page-header__title) {
+    font-family: var(--font-display);
+    font-size: var(--step-5);
+    line-height: 1.04;
+    letter-spacing: -0.022em;
+    max-width: 18ch;
+  }
+  .page-header__grid :global(.page-header__title em) {
+    color: var(--color-accent);
+  }
+  .page-header--compact .page-header__grid :global(.page-header__title) {
+    font-size: var(--step-4);
+    max-width: 24ch;
+  }
+  .page-header__lead {
+    max-width: 40em;
+  }
+  .page-header__aside:empty {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .page-header__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .crumbs,
+    .page-header__label,
+    .page-header__grid :global(.page-header__title) {
+      grid-column: 1 / span 10;
+    }
+    .page-header__lead {
+      grid-column: 1 / span 7;
+    }
+    .page-header__aside {
+      grid-column: 9 / span 4;
+      grid-row: 3 / span 2;
+      align-self: end;
+    }
+    .page-header__grid:has(.page-header__aside:not(:empty)) :global(.page-header__title) {
+      grid-column: 1 / span 8;
+    }
+  }
+</style>

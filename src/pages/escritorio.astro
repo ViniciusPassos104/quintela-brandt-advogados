@@ -1,0 +1,301 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import NextStep from '@/components/NextStep.astro';
+import MapIllustration from '@/components/MapIllustration.astro';
+import { SITE, fullAddress, mapsUrl } from '@/data/site';
+import { breadcrumbs, webPage, ORG_ID } from '@/lib/schema';
+
+const path = '/escritorio/';
+const title = 'O escritório';
+const description =
+  'Fundado em 2014 em Belo Horizonte, o Quintela Brandt trata família e patrimônio como partes da mesma conversa. Conheça a história, os princípios e o que não fazemos.';
+const crumbs = [{ name: 'Escritório', href: path }];
+
+const chapters = [
+  {
+    year: '2005 — 2014',
+    title: 'Antes do escritório',
+    text: 'Helena Quintela advogava em contencioso de família; Otávio Brandt, em direito societário. Em lados diferentes, os dois viam o mesmo problema: divórcios que paralisavam empresas, inventários que viravam disputas entre sócios, sucessões que ninguém tinha coragem de planejar. Cada advogado resolvia a sua parte — e ninguém olhava para o todo.',
+  },
+  {
+    year: '2014',
+    title: 'Uma mesma conversa',
+    text: 'O escritório nasce em Funcionários, com uma proposta direta: tratar família e patrimônio como partes de uma mesma conversa. Desde o primeiro caso, a regra é entender a situação inteira antes de recomendar qualquer caminho — e entregar esse entendimento por escrito. É a origem do Mapa do Caso.',
+  },
+  {
+    year: '2019',
+    title: 'Os imóveis entram na conta',
+    text: 'Muitos inventários travavam pelo mesmo motivo: imóveis sem registro, sem escritura ou com a documentação desatualizada. Com a chegada de Beatriz Nóbrega, que vinha de um cartório de registro de imóveis, a área imobiliária passa a caminhar junto com as demais.',
+  },
+  {
+    year: 'Hoje',
+    title: 'Pequeno de propósito',
+    text: 'Três advogados, quatro áreas e um número de casos que permite que cada um tenha um responsável de verdade. Atendemos presencialmente em Belo Horizonte e, por vídeo, famílias de outras cidades e estados.',
+  },
+];
+
+const principles = [
+  {
+    title: 'Entender antes de agir',
+    text: 'A primeira entrega do escritório não é uma petição: é o retrato da situação. Só depois de todos entenderem o que está em jogo faz sentido falar em estratégia.',
+  },
+  {
+    title: 'Preferir o caminho que se sustenta',
+    text: 'Acordos, mediação e soluções em cartório costumam ser mais rápidos, mais baratos e mais cumpridos. Mas não são dogma: quando o processo é o caminho adequado, é por ele que seguimos.',
+  },
+  {
+    title: 'Escrever para ser entendido',
+    text: 'Contratos, pareceres e atualizações são escritos para quem vai lê-los, não para outros advogados. Juridiquês não protege ninguém.',
+  },
+  {
+    title: 'Dizer o que não sabemos',
+    text: 'Prazos judiciais e decisões de terceiros não estão sob nosso controle. Quando algo depende disso, dizemos com clareza — e trabalhamos com faixas, não com promessas.',
+  },
+];
+
+const nots = [
+  'Não prometemos resultado. Nenhum advogado pode — e o Código de Ética da OAB proíbe que se prometa.',
+  'Não atuamos em direito criminal, trabalhista ou tributário contencioso. Quando a situação exige, indicamos colegas de confiança.',
+  'Não repassamos o seu caso a alguém que você não conheceu na reunião de análise.',
+  'Não iniciamos nenhuma providência sem contrato de honorários assinado.',
+];
+---
+
+<Base
+  title={title}
+  description={description}
+  schema={[webPage(path, title, description, 'AboutPage', { about: { '@id': ORG_ID } }), breadcrumbs(crumbs)]}
+>
+  <PageHeader
+    crumbs={crumbs}
+    label="O escritório"
+    title="Família e patrimônio, *na mesma* conversa."
+    lead="Fundado em 2014, em Belo Horizonte, a partir de uma constatação simples: as questões mais difíceis de uma família raramente cabem numa só área do direito."
+  />
+
+  <section class="section story" aria-labelledby="story-title">
+    <div class="container">
+      <h2 id="story-title" class="label label--accent story__label">História</h2>
+      <ol class="story__list" role="list">
+        {
+          chapters.map((c) => (
+            <li class="chapter">
+              <span class="rule rule--strong chapter__rule" data-reveal="rule" aria-hidden="true" />
+              <p class="chapter__year">{c.year}</p>
+              <div class="chapter__body" data-reveal="fade">
+                <h3 class="h3">{c.title}</h3>
+                <p>{c.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section principles" aria-labelledby="princ-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="label label--accent">Princípios</p>
+        <h2 id="princ-title" class="h2 section-head__title" data-reveal="lines">O que orienta o trabalho</h2>
+      </div>
+      <ol class="principles__list" role="list">
+        {
+          principles.map((p, i) => (
+            <li data-reveal="fade">
+              <span class="index">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="h3">{p.title}</h3>
+              <p class="muted">{p.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section nots" data-surface="ink" aria-labelledby="nots-title">
+    <div class="container nots__grid">
+      <div>
+        <p class="label label--accent">Transparência</p>
+        <h2 id="nots-title" class="h2" data-reveal="lines">O que não fazemos</h2>
+      </div>
+      <ul class="nots__list" role="list">
+        {
+          nots.map((n) => (
+            <li data-reveal="fade">
+              <span class="nots__mark" aria-hidden="true" />
+              {n}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section place" aria-labelledby="place-title">
+    <div class="container place__grid">
+      <div class="place__text">
+        <p class="label label--accent">O espaço</p>
+        <h2 id="place-title" class="h2" data-reveal="lines">Um andar em Funcionários</h2>
+        <p class="lead">
+          Duas salas de reunião: uma delas sem mesa entre as pessoas, pensada para as conversas mais difíceis. O prédio tem acesso por
+          elevador e rampa na entrada.
+        </p>
+        <p class="muted">
+          Para quem está em outra cidade — ou prefere não sair de casa —, todas as reuniões podem ser feitas por vídeo, com o mesmo
+          advogado e o mesmo método.
+        </p>
+        <address class="place__address">
+          <p>{fullAddress}</p>
+          <p class="small muted">{SITE.hours.label}</p>
+        </address>
+        <a class="arrow-link" href={mapsUrl} rel="noopener"><span>Como chegar</span><span class="arrow" aria-hidden="true">↗</span></a>
+      </div>
+      <div class="place__map" data-reveal="fade">
+        <MapIllustration />
+      </div>
+    </div>
+  </section>
+
+  <NextStep
+    title="Quer ver como isso funciona no seu caso?"
+    text="O primeiro contato é curto e não obriga a nada. Serve para entendermos o assunto e dizermos, com franqueza, se podemos ajudar."
+    cta="Conversar com o escritório"
+    secondary={{ label: 'Ver como trabalhamos', href: '/como-trabalhamos/' }}
+  />
+</Base>
+
+<style>
+  .story__label {
+    margin-bottom: var(--s-6);
+  }
+  .story__list {
+    display: grid;
+    gap: var(--s-8);
+  }
+  .chapter {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .chapter__rule {
+    margin-bottom: var(--s-2);
+  }
+  .chapter__year {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1;
+    color: var(--color-accent);
+    font-variant-numeric: lining-nums;
+  }
+  .chapter__body {
+    display: grid;
+    gap: var(--s-3);
+    max-width: 60ch;
+  }
+  .chapter__body p {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    line-height: 1.55;
+    color: var(--color-text-2);
+  }
+  .principles {
+    background: var(--color-surface);
+  }
+  .principles__list {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+  }
+  .principles__list li {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--color-text);
+  }
+  .principles__list p {
+    max-width: 44ch;
+  }
+  .nots__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .nots__list {
+    display: grid;
+    border-top: 1px solid var(--color-rule);
+  }
+  .nots__list li {
+    position: relative;
+    padding: var(--s-5) 0 var(--s-5) 2.25rem;
+    border-bottom: 1px solid var(--color-rule);
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    line-height: 1.45;
+  }
+  .nots__mark {
+    position: absolute;
+    left: 0;
+    top: calc(var(--s-5) + 0.72em);
+    width: 1rem;
+    height: 1px;
+    background: var(--color-accent);
+  }
+  .place__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .place__text {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .place__address {
+    display: grid;
+    gap: var(--s-2);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--color-rule);
+  }
+  .place__map {
+    border: 1px solid var(--color-rule);
+    padding: var(--s-4);
+    align-self: start;
+  }
+  @media (min-width: 48rem) {
+    .principles__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .chapter {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+      align-items: baseline;
+    }
+    .chapter__rule {
+      grid-column: 1 / -1;
+    }
+    .chapter__year {
+      grid-column: 1 / span 3;
+    }
+    .chapter__body {
+      grid-column: 4 / span 7;
+    }
+    .nots__grid,
+    .place__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .nots__grid > div {
+      grid-column: 1 / span 4;
+    }
+    .nots__list {
+      grid-column: 6 / span 7;
+    }
+    .place__text {
+      grid-column: 1 / span 5;
+    }
+    .place__map {
+      grid-column: 7 / span 6;
+    }
+  }
+</style>

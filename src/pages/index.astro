@@ -1,0 +1,35 @@
+---
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/home/Hero.astro';
+import Office from '@/components/home/Office.astro';
+import AreasExplorer from '@/components/home/AreasExplorer.astro';
+import Method from '@/components/home/Method.astro';
+import Team from '@/components/home/Team.astro';
+import Articles from '@/components/home/Articles.astro';
+import Faq from '@/components/home/Faq.astro';
+import Finale from '@/components/home/Finale.astro';
+import { SITE } from '@/data/site';
+import { webPage } from '@/lib/schema';
+
+const title = 'Quintela Brandt Advogados | Família, sucessões e patrimônio em Belo Horizonte';
+const description =
+  'Escritório em Belo Horizonte dedicado a divórcio e partilha, inventários, planejamento sucessório, empresas familiares e direito imobiliário.';
+---
+
+<Base
+  title={title}
+  rawTitle
+  description={description}
+  fullOrg
+  spy
+  schema={[webPage('/', SITE.name, description, 'WebPage', { about: { '@id': `${SITE.url}/#organization` } })]}
+>
+  <Hero />
+  <Office />
+  <AreasExplorer />
+  <Method />
+  <Team />
+  <Articles />
+  <Faq />
+  <Finale />
+</Base>

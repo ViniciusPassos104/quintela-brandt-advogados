@@ -1,0 +1,102 @@
+---
+import { SITE, whatsappUrl } from '@/data/site';
+interface Props {
+  topic?: string;
+}
+const { topic } = Astro.props;
+const channels = [
+  {
+    label: 'WhatsApp',
+    action: 'Conversar pelo WhatsApp',
+    value: SITE.whatsapp.display,
+    href: whatsappUrl(topic),
+    note: 'Uma mensagem inicial já vem escrita; você pode editá-la antes de enviar.',
+    external: true,
+  },
+  {
+    label: 'Telefone',
+    action: 'Ligar para o escritório',
+    value: SITE.phone.display,
+    href: `tel:${SITE.phone.e164}`,
+    note: SITE.hours.label,
+  },
+  {
+    label: 'E-mail',
+    action: 'Escrever um e-mail',
+    value: SITE.email,
+    href: `mailto:${SITE.email}`,
+    note: 'Bom para quem prefere explicar a situação com calma.',
+  },
+];
+---
+
+<ul class="channels" role="list">
+  {
+    channels.map((c) => (
+      <li>
+        <a class="channel" href={c.href} rel={c.external ? 'noopener' : undefined}>
+          <span class="label">{c.label}</span>
+          <span class="channel__action">{c.action}</span>
+          <span class="channel__value">{c.value}</span>
+          <span class="channel__note small">{c.note}</span>
+          <span class="channel__arrow" aria-hidden="true">
+            →
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .channels {
+    border-top: 1px solid var(--color-text);
+  }
+  .channels li {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .channel {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--s-1) var(--s-4);
+    padding-block: var(--s-5);
+    text-decoration: none;
+    color: var(--color-text);
+  }
+  .channel .label {
+    grid-column: 1;
+  }
+  .channel__action {
+    grid-column: 1;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    transition: color var(--dur-micro) var(--ease-out);
+  }
+  .channel__value {
+    grid-column: 1;
+    font-weight: 560;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .channel__note {
+    grid-column: 1;
+    color: var(--color-muted);
+  }
+  .channel__arrow {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: center;
+    font-size: var(--step-2);
+    color: var(--color-accent);
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+  .channel:hover .channel__action {
+    color: var(--color-accent);
+  }
+  .channel:hover .channel__arrow {
+    transform: translateX(5px);
+  }
+</style>

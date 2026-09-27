@@ -1,0 +1,293 @@
+---
+import Base from '@/layouts/Base.astro';
+import RiseText from '@/components/RiseText.astro';
+import Portrait from '@/components/Portrait.astro';
+import ArticleRow from '@/components/ArticleRow.astro';
+import NextStep from '@/components/NextStep.astro';
+import { TEAM, type Lawyer } from '@/data/team';
+import { AREAS } from '@/data/areas';
+import { getArticles } from '@/lib/articles';
+import { breadcrumbs, person, webPage } from '@/lib/schema';
+
+export function getStaticPaths() {
+  return TEAM.map((lawyer) => ({ params: { slug: lawyer.slug }, props: { lawyer } }));
+}
+const { lawyer } = Astro.props as { lawyer: Lawyer };
+const path = `/equipe/${lawyer.slug}/`;
+const areas = lawyer.areas.map((s) => AREAS.find((a) => a.slug === s)!);
+const articles = (await getArticles()).filter((a) => a.data.author === lawyer.slug);
+const others = TEAM.filter((l) => l.slug !== lawyer.slug);
+const crumbs = [
+  { name: 'Equipe', href: '/equipe/' },
+  { name: lawyer.name, href: path },
+];
+const description = `${lawyer.name}, ${lawyer.role.toLowerCase()} do escritório Quintela Brandt. ${lawyer.summary}`.slice(0, 158);
+---
+
+<Base
+  title={`${lawyer.name}, ${lawyer.role.toLowerCase()}`}
+  description={description}
+  ogType="profile"
+  ogImage={`/og/equipe-${lawyer.slug}.png`}
+  schema={[webPage(path, lawyer.name, description, 'ProfilePage', { mainEntity: person(lawyer) }), breadcrumbs(crumbs)]}
+>
+  <header class="profile-head">
+    <div class="container profile-head__grid">
+      <nav class="crumbs fade-up" style="--d:60ms" aria-label="Trilha de navegação">
+        <ol role="list">
+          <li><a href="/">Início</a></li>
+          <li><a href="/equipe/">Equipe</a></li>
+          <li><span aria-current="page">{lawyer.name}</span></li>
+        </ol>
+      </nav>
+      <div class="profile-head__media fade-up" style="--d:200ms">
+        <Portrait lawyer={lawyer} size="hero" />
+      </div>
+      <div class="profile-head__body">
+        <p class="label label--accent fade-up" style="--d:120ms">{lawyer.role} · desde {lawyer.since}</p>
+        <RiseText as="h1" class="profile-head__name" text={lawyer.name} />
+        <p class="profile-head__areas fade-up" style="--d:360ms">
+          {
+            areas.map((a, i) => (
+              <>
+                {i > 0 && <span aria-hidden="true"> · </span>}
+                <a href={`/atuacao/${a.slug}/`}>{a.h1}</a>
+              </>
+            ))
+          }
+        </p>
+        <blockquote class="profile-head__quote fade-up" style="--d:460ms">
+          <p>“{lawyer.quote}”</p>
+        </blockquote>
+      </div>
+    </div>
+  </header>
+
+  <section class="section profile-section" aria-labelledby="traj-title">
+    <div class="container profile-section__grid">
+      <h2 id="traj-title" class="label label--accent">Trajetória</h2>
+      <div class="prose profile-prose">
+        {lawyer.trajectory.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight profile-section" aria-labelledby="facts-title">
+    <div class="container profile-section__grid">
+      <h2 id="facts-title" class="label label--accent">Formação e atuação</h2>
+      <div class="profile-facts">
+        <div class="profile-facts__col" data-reveal="fade">
+          <h3 class="label">Formação</h3>
+          <ul role="list">
+            {
+              lawyer.education.map((e) => (
+                <li>
+                  <span class="profile-facts__main">{e.title}</span>
+                  <span class="small muted">{e.detail}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="profile-facts__col" data-reveal="fade">
+          <h3 class="label">Dedica-se especialmente a</h3>
+          <ul role="list">
+            {lawyer.focus.map((f) => <li><span class="profile-facts__main">{f}</span></li>)}
+          </ul>
+        </div>
+        <div class="profile-facts__col" data-reveal="fade">
+          <h3 class="label">Idiomas</h3>
+          <p>{lawyer.languages}</p>
+          {
+            lawyer.oab && (
+              <>
+                <h3 class="label">Inscrição</h3>
+                <p>OAB/MG {lawyer.oab}</p>
+              </>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {
+    articles.length > 0 && (
+      <section class="section section--tight profile-section" aria-labelledby="art-title">
+        <div class="container profile-section__grid">
+          <h2 id="art-title" class="label label--accent">
+            Artigos de {lawyer.firstName}
+          </h2>
+          <div class="profile-articles">
+            {articles.map((a) => (
+              <ArticleRow article={a} showAuthor={false} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <nav class="section section--tight profile-others" aria-labelledby="others-title">
+    <div class="container profile-section__grid">
+      <h2 id="others-title" class="label">Também no escritório</h2>
+      <ul role="list">
+        {
+          others.map((o) => (
+            <li>
+              <a href={`/equipe/${o.slug}/`}>
+                <span class="profile-others__name">{o.name}</span>
+                <span class="small muted">{o.role}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+
+  <NextStep
+    title={`Quer conversar com ${lawyer.firstName}?`}
+    text={`Conte brevemente o que está acontecendo. Se o assunto estiver na área de ${lawyer.firstName}, a reunião de análise é com ${lawyer.firstName}; se não, indicamos quem pode ajudar.`}
+    cta="Agendar uma conversa"
+    href={`/contato/?assunto=${areas[0].formValue}`}
+    topic={areas[0].topic}
+  />
+</Base>
+
+<style>
+  .profile-head {
+    padding-top: calc(var(--header-h) + clamp(2rem, 5vw, 4rem));
+    padding-bottom: var(--s-8);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .profile-head__grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .profile-head__media {
+    max-width: 26rem;
+  }
+  .profile-head__body {
+    display: grid;
+    gap: var(--s-4);
+    align-content: end;
+  }
+  .profile-head__body :global(.profile-head__name) {
+    font-family: var(--font-display);
+    font-size: var(--step-6);
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+  .profile-head__areas {
+    font-size: var(--step-0);
+    font-weight: 560;
+    color: var(--color-accent);
+  }
+  .profile-head__areas a {
+    color: inherit;
+  }
+  .profile-head__quote {
+    margin-top: var(--s-4);
+    padding-left: var(--s-5);
+    border-left: 1px solid var(--color-accent);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--step-2);
+    line-height: 1.35;
+    max-width: 34ch;
+  }
+
+  .profile-section + .profile-section {
+    border-top: 1px solid var(--color-rule);
+  }
+  .profile-section__grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .profile-prose p:first-child {
+    font-size: var(--step-1);
+  }
+  .profile-facts {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .profile-facts__col {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+  }
+  .profile-facts__col ul {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .profile-facts__col li {
+    display: grid;
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .profile-facts__main {
+    font-weight: 560;
+  }
+  .profile-facts__col h3 + p {
+    margin-bottom: var(--s-4);
+  }
+  .profile-articles {
+    border-top: 1px solid var(--color-text);
+  }
+  .profile-others {
+    border-top: 1px solid var(--color-rule);
+  }
+  .profile-others ul {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .profile-others a {
+    display: grid;
+    text-decoration: none;
+  }
+  .profile-others__name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    transition: color var(--dur-micro) var(--ease-out);
+  }
+  .profile-others a:hover .profile-others__name {
+    color: var(--color-accent);
+  }
+  @media (min-width: 48rem) {
+    .profile-facts {
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: var(--gutter);
+    }
+    .profile-others ul {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: var(--gutter);
+    }
+  }
+  @media (min-width: 64rem) {
+    .profile-head__grid,
+    .profile-section__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .crumbs {
+      grid-column: 1 / -1;
+    }
+    .profile-head__media {
+      grid-column: 1 / span 4;
+    }
+    .profile-head__body {
+      grid-column: 6 / span 7;
+    }
+    .profile-section__grid > h2 {
+      grid-column: 1 / span 3;
+      padding-top: 0.4rem;
+    }
+    .profile-section__grid > :not(h2) {
+      grid-column: 4 / span 9;
+    }
+    .profile-prose {
+      grid-column: 4 / span 7 !important;
+    }
+  }
+</style>

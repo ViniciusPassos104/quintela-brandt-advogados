@@ -1,0 +1,73 @@
+---
+interface Props {
+  sections: { id: string; title: string }[];
+  updated: string;
+}
+const { sections, updated } = Astro.props;
+---
+
+<section class="section legal">
+  <div class="container legal__grid">
+    <nav class="legal__toc" aria-label="Nesta página">
+      <p class="label">Nesta página</p>
+      <ol role="list">
+        {sections.map((s, i) => <li><a href={`#${s.id}`}><span class="index">{String(i + 1).padStart(2, '0')}</span>{s.title}</a></li>)}
+      </ol>
+      <p class="small muted legal__updated">Última atualização: {updated}</p>
+    </nav>
+    <div class="prose legal__body">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .legal__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .legal__toc {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+  }
+  .legal__toc ol {
+    display: grid;
+    gap: 0.1rem;
+  }
+  .legal__toc a {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    padding-block: 0.3rem;
+    font-size: var(--step--1);
+    color: var(--color-text-2);
+    text-decoration: none;
+  }
+  .legal__toc a:hover {
+    color: var(--color-accent);
+  }
+  .legal__updated {
+    margin-top: var(--s-3);
+  }
+  .legal__body :global(h2) {
+    font-size: var(--step-2);
+  }
+  .legal__body :global(h2:first-child) {
+    margin-top: 0;
+  }
+  @media (min-width: 64rem) {
+    .legal__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .legal__toc {
+      grid-column: 1 / span 3;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+      align-self: start;
+    }
+    .legal__body {
+      grid-column: 5 / span 7;
+    }
+  }
+</style>

@@ -1,0 +1,250 @@
+---
+import Base from '@/layouts/Base.astro';
+import RiseText from '@/components/RiseText.astro';
+import ArticleRow from '@/components/ArticleRow.astro';
+import NextStep from '@/components/NextStep.astro';
+import { render } from 'astro:content';
+import { getArticles, formatDate, isoDate, type Article } from '@/lib/articles';
+import { AREAS } from '@/data/areas';
+import { TEAM } from '@/data/team';
+import { SITE } from '@/data/site';
+import { abs, breadcrumbs, webPage, ORG_ID } from '@/lib/schema';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article, all: articles } }));
+}
+
+const { article, all } = Astro.props as { article: Article; all: Article[] };
+const { data } = article;
+const { Content } = await render(article);
+const path = `/artigos/${article.id}/`;
+const area = AREAS.find((a) => a.slug === data.area)!;
+const author = TEAM.find((l) => l.slug === data.author)!;
+const related = data.related.map((id) => all.find((a) => a.id === id)).filter(Boolean) as Article[];
+const crumbs = [
+  { name: 'Artigos', href: '/artigos/' },
+  { name: data.title, href: path },
+];
+
+const posting = {
+  '@type': 'BlogPosting',
+  '@id': abs(path) + '#article',
+  headline: data.title,
+  description: data.description,
+  image: [abs(`/og/artigo-${article.id}.png`)],
+  datePublished: `${isoDate(data.published)}T09:00:00-03:00`,
+  dateModified: `${isoDate(data.updated ?? data.published)}T09:00:00-03:00`,
+  inLanguage: 'pt-BR',
+  articleSection: area.name,
+  wordCount: article.body?.split(/\s+/).length,
+  author: { '@type': 'Person', '@id': abs(`/equipe/${author.slug}/#person`), name: author.name, url: abs(`/equipe/${author.slug}/`) },
+  publisher: { '@id': ORG_ID },
+  mainEntityOfPage: { '@id': abs(path) + '#webpage' },
+  about: { '@id': abs(`/atuacao/${area.slug}/#service`) },
+};
+---
+
+<Base
+  title={data.title}
+  description={data.description}
+  ogType="article"
+  ogImage={`/og/artigo-${article.id}.png`}
+  article={{ published: data.published, modified: data.updated, author: author.name, section: area.name }}
+  schema={[webPage(path, data.title, data.description), breadcrumbs(crumbs), posting]}
+>
+  <article class="post" data-reading>
+    <header class="post__head">
+      <div class="container post__head-grid">
+        <nav class="crumbs fade-up" style="--d:60ms" aria-label="Trilha de navegação">
+          <ol role="list">
+            <li><a href="/">Início</a></li>
+            <li><a href="/artigos/">Artigos</a></li>
+            <li><a href={`/artigos/?area=${area.slug}`}>{area.name}</a></li>
+          </ol>
+        </nav>
+        <RiseText as="h1" class="post__title" text={data.title} />
+        <p class="post__lead lead fade-up" style="--d:380ms">{data.description}</p>
+        <dl class="post__meta fade-up" style="--d:480ms">
+          <div>
+            <dt>Autoria</dt>
+            <dd><a href={`/equipe/${author.slug}/`}>{author.name}</a></dd>
+          </div>
+          <div>
+            <dt>Publicado em</dt>
+            <dd><time datetime={isoDate(data.published)}>{formatDate(data.published)}</time></dd>
+          </div>
+          {
+            data.updated && (
+              <div>
+                <dt>Atualizado em</dt>
+                <dd>
+                  <time datetime={isoDate(data.updated)}>{formatDate(data.updated)}</time>
+                </dd>
+              </div>
+            )
+          }
+          <div>
+            <dt>Leitura</dt>
+            <dd>{data.readingTime} minutos</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <div class="container post__grid">
+      <div class="prose post__body">
+        <Content />
+      </div>
+
+      <aside class="post__aside">
+        <div class="post__author">
+          <p class="label">Quem escreveu</p>
+          <p class="post__author-name"><a href={`/equipe/${author.slug}/`}>{author.name}</a></p>
+          <p class="small muted">{author.role} · {author.summary}</p>
+        </div>
+        <div class="post__area">
+          <p class="label">Área relacionada</p>
+          <a class="arrow-link" href={`/atuacao/${area.slug}/`}><span>{area.h1}</span><span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </aside>
+    </div>
+
+    <div class="container">
+      <p class="post__disclaimer small">
+        Conteúdo informativo, elaborado de acordo com a legislação vigente na data da última atualização. Não constitui orientação
+        jurídica para casos concretos, que dependem da análise dos fatos e documentos. {SITE.name} observa o Código de Ética e Disciplina
+        da OAB.
+      </p>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="section section--tight post-related" aria-labelledby="rel-title">
+        <div class="container">
+          <h2 id="rel-title" class="label label--accent">
+            Continue lendo
+          </h2>
+          <div class="post-related__list">
+            {related.map((a) => (
+              <ArticleRow article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <NextStep
+    title="Esse assunto tem a ver com a sua situação?"
+    text={`Regras gerais ajudam a entender; decisões pedem análise. Conte o que está acontecendo e indicamos o próximo passo — ${SITE.responseTime}.`}
+    cta={`Conversar sobre ${area.topic}`}
+    href={`/contato/?assunto=${area.formValue}`}
+    topic={area.topic}
+  />
+</Base>
+
+<style>
+  .post__head {
+    padding-top: calc(var(--header-h) + clamp(2rem, 5vw, 4.5rem));
+    padding-bottom: var(--s-8);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .post__head-grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .post__head-grid :global(.post__title) {
+    font-family: var(--font-display);
+    font-size: var(--step-5);
+    line-height: 1.05;
+    letter-spacing: -0.022em;
+    max-width: 20ch;
+    margin-top: var(--s-4);
+  }
+  .post__lead {
+    max-width: 44em;
+  }
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4) var(--s-7);
+    margin-top: var(--s-4);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--color-rule);
+    font-size: var(--step--1);
+  }
+  .post__meta dt {
+    color: var(--color-muted);
+  }
+  .post__meta dd {
+    font-weight: 560;
+  }
+  .post__grid {
+    display: grid;
+    gap: var(--s-8);
+    padding-block: var(--s-9);
+  }
+  .post__body :global(p:first-of-type) {
+    font-size: 1.15em;
+  }
+  .post__aside {
+    display: grid;
+    gap: var(--s-6);
+    align-content: start;
+  }
+  .post__author,
+  .post__area {
+    display: grid;
+    gap: var(--s-2);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--color-text);
+  }
+  .post__author-name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+  }
+  .post__author-name a {
+    text-decoration: none;
+  }
+  .post__author-name a:hover {
+    color: var(--color-accent);
+  }
+  .post__disclaimer {
+    max-width: 72ch;
+    padding: var(--s-5);
+    margin-bottom: var(--s-9);
+    background: var(--color-surface);
+    color: var(--color-text-2);
+  }
+  .post-related {
+    border-top: 1px solid var(--color-rule);
+  }
+  .post-related__list {
+    margin-top: var(--s-5);
+    border-top: 1px solid var(--color-text);
+  }
+  @media (min-width: 64rem) {
+    .post__head-grid,
+    .post__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .post__head-grid > * {
+      grid-column: 1 / span 10;
+    }
+    .post__lead {
+      grid-column: 1 / span 8;
+    }
+    .post__body {
+      grid-column: 1 / span 8;
+    }
+    .post__aside {
+      grid-column: 10 / span 3;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+      align-self: start;
+    }
+  }
+</style>

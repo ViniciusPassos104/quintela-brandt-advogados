@@ -1,0 +1,125 @@
+---
+import ContactChannels from '@/components/ContactChannels.astro';
+import MapIllustration from '@/components/MapIllustration.astro';
+import { SITE, mapsUrl } from '@/data/site';
+---
+
+<section id="contato" class="finale" data-section="contato" data-surface="ink" data-finale aria-labelledby="finale-title">
+  <div class="finale__bg" data-finale-bg aria-hidden="true"></div>
+  <div class="container finale__inner">
+    <p class="label label--accent">07 · Contato</p>
+    <h2 id="finale-title" class="finale__title" data-reveal="lines">
+      Uma questão jurídica começa muito antes de um processo. <em>Começa quando alguém decide entendê-la.</em>
+    </h2>
+
+    <div class="finale__primary" data-reveal="fade">
+      <a class="btn btn--accent btn--lg" href="/contato/">
+        <span class="btn-label">Agendar uma conversa</span><span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <p class="finale__promise small">
+        Respondemos {SITE.responseTime}. Quem responde é {SITE.intake.name}, que coordena o atendimento — e tudo o que você contar fica sob
+        sigilo profissional, mesmo que não chegue a contratar o escritório.
+      </p>
+    </div>
+
+    <div class="finale__grid">
+      <div class="finale__channels" data-reveal="fade">
+        <h3 class="label">Prefere outro caminho?</h3>
+        <ContactChannels />
+      </div>
+      <div class="finale__place" data-reveal="fade">
+        <h3 class="label">Onde estamos</h3>
+        <MapIllustration class="finale__map" />
+        <address class="finale__address">
+          <p>{SITE.address.street}, {SITE.address.complement}<br />{SITE.address.district} · {SITE.address.city}/{SITE.address.state}</p>
+          <p class="small muted">{SITE.hours.label} · reuniões presenciais ou por vídeo</p>
+        </address>
+        <a class="arrow-link" href={mapsUrl} rel="noopener"><span>Como chegar</span><span class="arrow" aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .finale {
+    position: relative;
+    background: transparent;
+    padding-block: var(--section) var(--s-9);
+    isolation: isolate;
+  }
+  .finale__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--ink-950);
+    transform-origin: 50% 0;
+  }
+  .finale__inner {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .finale__title {
+    font-family: var(--font-display);
+    font-size: var(--step-5);
+    line-height: 1.04;
+    letter-spacing: -0.022em;
+    max-width: 18ch;
+  }
+  .finale__title em {
+    color: var(--color-accent);
+  }
+  .finale__primary {
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+  }
+  .finale__promise {
+    max-width: 52ch;
+    color: var(--color-text-2);
+  }
+  .finale__grid {
+    display: grid;
+    gap: var(--s-8);
+    margin-top: var(--s-6);
+  }
+  .finale__channels,
+  .finale__place {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .finale__place :global(.finale__map) {
+    border: 1px solid var(--color-rule);
+    padding: var(--s-3);
+  }
+  .finale__address {
+    display: grid;
+    gap: var(--s-2);
+  }
+  @media (min-width: 64rem) {
+    .finale__inner {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .finale__inner > .label {
+      grid-column: 1 / -1;
+    }
+    .finale__title {
+      grid-column: 1 / span 10;
+    }
+    .finale__primary {
+      grid-column: 1 / span 6;
+    }
+    .finale__grid {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .finale__channels {
+      grid-column: 1 / span 6;
+    }
+    .finale__place {
+      grid-column: 8 / span 5;
+    }
+  }
+</style>

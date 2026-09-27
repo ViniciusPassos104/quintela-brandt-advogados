@@ -1,0 +1,176 @@
+---
+import Logo from './Logo.astro';
+import { SITE, NAV, mapsUrl, whatsappUrl } from '@/data/site';
+import { AREAS } from '@/data/areas';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer" data-surface="ink">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <Logo />
+        <p class="site-footer__about">
+          Escritório de advocacia em Belo Horizonte dedicado às questões em que família e patrimônio se encontram. Desde {SITE.foundingYear}.
+        </p>
+      </div>
+
+      <nav class="site-footer__col" aria-labelledby="ft-escritorio">
+        <h2 class="label" id="ft-escritorio">Escritório</h2>
+        <ul role="list">
+          {NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          <li><a href="/contato/">Contato</a></li>
+        </ul>
+      </nav>
+
+      <nav class="site-footer__col" aria-labelledby="ft-atuacao">
+        <h2 class="label" id="ft-atuacao">Atuação</h2>
+        <ul role="list">
+          {AREAS.map((a) => <li><a href={`/atuacao/${a.slug}/`}>{a.name}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="site-footer__col">
+        <h2 class="label">Contato</h2>
+        <address>
+          <p><a href={mapsUrl} rel="noopener">{SITE.address.street}, {SITE.address.complement}<br />{SITE.address.district} · {SITE.address.city}/{SITE.address.state}<br />CEP {SITE.address.postalCode}</a></p>
+          <p>
+            <a href={`tel:${SITE.phone.e164}`}>{SITE.phone.display}</a> · <a href={whatsappUrl()} rel="noopener">WhatsApp</a><br />
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          </p>
+          <p class="muted">{SITE.hours.label}</p>
+        </address>
+      </div>
+    </div>
+
+    <div class="site-footer__legal">
+      <p class="small muted">
+        {SITE.legalName}{SITE.oabRegistration && ` · Registro OAB/MG nº ${SITE.oabRegistration}`}{SITE.cnpj && ` · CNPJ ${SITE.cnpj}`}.
+        Conteúdo de caráter exclusivamente informativo, em observância ao Código de Ética e Disciplina da OAB e ao Provimento nº 205/2021. As informações deste site não substituem a análise individual de cada caso.
+      </p>
+      {
+        SITE.social.length > 0 && (
+          <ul role="list" class="site-footer__social">
+            {SITE.social.map((s) => (
+              <li>
+                <a href={s.url} rel="noopener">{s.label}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <div class="site-footer__bottom small">
+        <p>© {year} {SITE.name}</p>
+        <ul role="list">
+          <li><a href="/politica-de-privacidade/">Política de privacidade</a></li>
+          <li><a href="/termos-de-uso/">Termos de uso</a></li>
+          <li><a href="#topo" class="site-footer__top">Voltar ao topo <span aria-hidden="true">↑</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: var(--s-9) var(--s-6);
+    border-top: 1px solid var(--color-rule);
+  }
+  .site-footer a {
+    text-decoration: none;
+    color: var(--color-text-2);
+  }
+  .site-footer a:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+  .site-footer__grid {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+    grid-template-columns: 1fr 1fr;
+  }
+  .site-footer__brand {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--s-4);
+    align-content: start;
+  }
+  .site-footer__brand :global(.logo) {
+    color: var(--color-text);
+  }
+  .site-footer__about {
+    font-family: var(--font-serif);
+    color: var(--color-text-2);
+    max-width: 30ch;
+    font-size: var(--step-0);
+    line-height: 1.5;
+  }
+  .site-footer__col {
+    display: grid;
+    gap: var(--s-4);
+    align-content: start;
+    font-size: var(--step--1);
+  }
+  .site-footer__col ul {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .site-footer__col li a {
+    display: inline-block;
+    padding-block: 0.3rem;
+  }
+  .site-footer__col address {
+    display: grid;
+    gap: var(--s-4);
+    line-height: 1.6;
+  }
+  .site-footer__col:last-child {
+    grid-column: 1 / -1;
+  }
+  .site-footer__legal {
+    margin-top: var(--s-9);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--color-rule);
+    display: grid;
+    gap: var(--s-5);
+  }
+  .site-footer__legal > p {
+    max-width: 90ch;
+  }
+  .site-footer__social {
+    display: flex;
+    gap: var(--s-5);
+  }
+  .site-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-6);
+    color: var(--color-muted);
+  }
+  .site-footer__bottom ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-5);
+  }
+  .site-footer__bottom a {
+    display: inline-block;
+    padding-block: 0.4rem;
+  }
+  @media (min-width: 48rem) {
+    .site-footer__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .site-footer__col:last-child {
+      grid-column: auto;
+    }
+  }
+  @media (min-width: 64rem) {
+    .site-footer__grid {
+      grid-template-columns: 5fr 2fr 2fr 3fr;
+    }
+    .site-footer__brand {
+      grid-column: auto;
+    }
+  }
+</style>

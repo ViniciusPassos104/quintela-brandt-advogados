@@ -1,0 +1,133 @@
+---
+/**
+ * As cinco etapas ao longo do fio, com o Mapa do Caso ao lado.
+ * No desktop, o documento se preenche conforme as etapas são alcançadas.
+ */
+import CaseMap from '@/components/CaseMap.astro';
+import { STEPS } from '@/data/method';
+---
+
+<div class="method__grid">
+  <div class="method__timeline" data-timeline>
+    <span class="method__line" aria-hidden="true"><span class="method__fill" data-timeline-fill></span></span>
+    <ol class="method__steps" role="list">
+      {
+        STEPS.map((step) => (
+          <li class="method__step" data-step={Number(step.n)}>
+            <span class="method__node" aria-hidden="true" />
+            <div class="method__step-head">
+              <span class="index">{step.n}</span>
+              <span class="method__meta label">{step.meta}</span>
+            </div>
+            <h3 class="method__title h3">{step.title}</h3>
+            <p class="method__short">{step.short}</p>
+            <p class="method__text muted">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <div class="method__aside">
+    <div class="method__sticky">
+      <CaseMap />
+    </div>
+  </div>
+</div>
+
+<style>
+  .method__grid {
+    display: grid;
+    gap: var(--s-8);
+  }
+  .method__timeline {
+    position: relative;
+    --node: 0.8125rem;
+  }
+  .method__line {
+    position: absolute;
+    left: calc(var(--node) / 2 - 0.5px);
+    top: 0.6rem;
+    bottom: 2rem;
+    width: 1px;
+    background: var(--color-rule);
+  }
+  .method__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--color-thread);
+    transform-origin: top;
+  }
+  .method__steps {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .method__step {
+    position: relative;
+    display: grid;
+    gap: var(--s-2);
+    padding-left: calc(var(--node) + var(--s-5));
+  }
+  .method__node {
+    position: absolute;
+    left: 0;
+    top: 0.45rem;
+    width: var(--node);
+    height: var(--node);
+    border-radius: 50%;
+    border: 1px solid var(--color-text);
+    background: var(--color-bg);
+    transition:
+      background-color var(--dur-ui) var(--ease-out),
+      border-color var(--dur-ui) var(--ease-out),
+      transform var(--dur-ui) var(--ease-out);
+  }
+  .method__step-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-4);
+  }
+  .method__title {
+    transition: color var(--dur-ui) var(--ease-out);
+  }
+  .method__short {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    line-height: 1.4;
+  }
+  .method__text {
+    font-size: var(--step--1);
+    max-width: 52ch;
+  }
+  :global(html.motion) .method__step:not(.is-active) .method__title {
+    color: var(--color-text-2);
+  }
+  .method__step.is-active .method__node {
+    background: var(--color-thread);
+    border-color: var(--color-thread);
+    transform: scale(1.15);
+  }
+
+  @media (min-width: 64rem) {
+    .method__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+      align-items: start;
+    }
+    .method__timeline {
+      grid-column: 1 / span 6;
+      padding-bottom: 20vh;
+    }
+    .method__steps {
+      gap: 22vh;
+    }
+    .method__aside {
+      grid-column: 8 / span 5;
+      align-self: stretch;
+    }
+    .method__sticky {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

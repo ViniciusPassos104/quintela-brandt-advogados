@@ -1,0 +1,168 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import MethodTimeline from '@/components/MethodTimeline.astro';
+import NextStep from '@/components/NextStep.astro';
+import { COMMITMENTS } from '@/data/method';
+import { SITE } from '@/data/site';
+import { breadcrumbs, webPage } from '@/lib/schema';
+
+const path = '/como-trabalhamos/';
+const title = 'Como trabalhamos';
+const description =
+  'Primeira conversa, reunião de análise, Mapa do Caso, decisão e condução: como funciona o atendimento do escritório Quintela Brandt, honorários e comunicação.';
+const crumbs = [{ name: 'Como trabalhamos', href: path }];
+
+const topics = [
+  {
+    id: 'honorarios',
+    label: 'Honorários',
+    title: 'Definidos depois de entender o caso',
+    body: [
+      'Só é possível dimensionar um trabalho depois de conhecê-lo. Por isso, os honorários são propostos após a reunião de análise, junto com o Mapa do Caso, e formalizados em contrato escrito antes de qualquer providência.',
+      'Conforme a natureza do caso, podem ser fixos por etapa, mensais — para o acompanhamento contínuo de empresas familiares — ou combinar uma parte fixa e outra vinculada ao resultado, sempre dentro das regras da OAB e tendo como referência a tabela de honorários da seccional mineira.',
+      'Custas judiciais, emolumentos de cartório e impostos não são honorários: aparecem separados, estimados no Mapa do Caso, para que nada chegue como surpresa.',
+    ],
+  },
+  {
+    id: 'comunicacao',
+    label: 'Comunicação',
+    title: 'Você sempre sabe o que está acontecendo',
+    body: [
+      'Cada movimentação relevante gera um resumo por escrito, em linguagem clara: o que aconteceu, o que significa e qual é o próximo passo. Quando nada acontece — o que, em processos judiciais, é comum —, você recebe mesmo assim uma atualização pelo menos uma vez por mês.',
+      `Para conversas rápidas, WhatsApp e telefone; para o que precisa ficar registrado, e-mail. Mensagens recebem resposta ${SITE.responseTime}.`,
+    ],
+  },
+  {
+    id: 'online',
+    label: 'Atendimento por vídeo',
+    title: 'O mesmo método, de qualquer cidade',
+    body: [
+      'A reunião de análise e os encontros seguintes podem ser feitos por videoconferência. Documentos são trocados por meio seguro, e contratos podem ser assinados eletronicamente.',
+      'Quando o caso tramita em outro estado, avaliamos na reunião de análise se conduzimos diretamente ou em conjunto com um escritório local — e explicamos o motivo.',
+    ],
+  },
+  {
+    id: 'sigilo',
+    label: 'Sigilo e dados',
+    title: 'O que você conta fica entre você e o escritório',
+    body: [
+      'O sigilo profissional vale desde o primeiro contato, mesmo que você não chegue a contratar o escritório. Documentos são guardados apenas pelo tempo necessário e tratados conforme a Lei Geral de Proteção de Dados.',
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={[webPage(path, title, description), breadcrumbs(crumbs)]}>
+  <PageHeader
+    crumbs={crumbs}
+    label="Método"
+    title="Do primeiro contato à decisão, *sem surpresas*."
+    lead="Cinco etapas, sempre as mesmas. A ideia é simples: você só decide depois de ter, por escrito, o retrato completo da sua situação."
+  />
+
+  <section class="section" aria-labelledby="steps-title">
+    <div class="container">
+      <h2 id="steps-title" class="visually-hidden">As cinco etapas</h2>
+      <MethodTimeline />
+    </div>
+  </section>
+
+  <section class="section commit" data-surface="ink" aria-labelledby="commit-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="label label--accent">Compromissos</p>
+        <h2 id="commit-title" class="h2 section-head__title" data-reveal="lines">Durante todo o trabalho</h2>
+      </div>
+      <ul class="commit__list" role="list">
+        {
+          COMMITMENTS.map((c, i) => (
+            <li>
+              <span class="rule rule--strong" data-reveal="rule" aria-hidden="true" />
+              <span class="index">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="h3">{c.title}</h3>
+              <p class="muted">{c.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    topics.map((t) => (
+      <section class="section topic" id={t.id} aria-labelledby={`${t.id}-title`}>
+        <div class="container topic__grid">
+          <p class="label label--accent">{t.label}</p>
+          <div class="topic__body">
+            <h2 id={`${t.id}-title`} class="h2" data-reveal="lines">
+              {t.title}
+            </h2>
+            <div class="prose topic__prose">
+              {t.body.map((p) => (
+                <p>{p}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <NextStep
+    title="A primeira etapa é só uma conversa."
+    text="Conte, em poucas palavras, o que está acontecendo. Nesse momento ninguém assume compromisso — nem você, nem o escritório."
+    cta="Agendar uma conversa"
+    secondary={{ label: 'Ler as dúvidas frequentes', href: '/duvidas/' }}
+  />
+</Base>
+
+<style>
+  .commit__list {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+  }
+  .commit__list li {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+  }
+  .commit__list .rule {
+    margin-bottom: var(--s-3);
+  }
+  .topic + .topic {
+    border-top: 1px solid var(--color-rule);
+  }
+  .topic__grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .topic__body {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .topic__body h2 {
+    max-width: 20ch;
+  }
+  @media (min-width: 48rem) {
+    .commit__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .commit__list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .topic__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .topic__grid > .label {
+      grid-column: 1 / span 3;
+      padding-top: 1rem;
+    }
+    .topic__body {
+      grid-column: 4 / span 8;
+    }
+  }
+</style>

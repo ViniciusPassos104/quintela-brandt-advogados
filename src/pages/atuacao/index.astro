@@ -1,0 +1,162 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import NextStep from '@/components/NextStep.astro';
+import { AREAS } from '@/data/areas';
+import { TEAM } from '@/data/team';
+import { breadcrumbs, webPage, abs } from '@/lib/schema';
+
+const path = '/atuacao/';
+const title = 'Áreas de atuação';
+const description =
+  'Direito de família, inventários e sucessões, empresas familiares e direito imobiliário: as quatro áreas do escritório Quintela Brandt, em Belo Horizonte.';
+const crumbs = [{ name: 'Atuação', href: path }];
+---
+
+<Base
+  title={title}
+  description={description}
+  schema={[
+    webPage(path, title, description, 'CollectionPage', {
+      hasPart: AREAS.map((a) => ({ '@id': abs(`/atuacao/${a.slug}/#service`) })),
+    }),
+    breadcrumbs(crumbs),
+  ]}
+>
+  <PageHeader
+    crumbs={crumbs}
+    label="Atuação"
+    title="Quatro áreas que *raramente* aparecem sozinhas."
+    lead="Família, herança, empresa e imóveis costumam aparecer juntos. Por isso as áreas do escritório trabalham de forma integrada — e um caso pode envolver mais de uma delas, com um único advogado responsável."
+  />
+
+  <section class="section" aria-label="Áreas">
+    <div class="container">
+      <ol class="areas-index" role="list">
+        {
+          AREAS.map((area) => {
+            const people = area.lawyers.map((s) => TEAM.find((l) => l.slug === s)?.name).join(' e ');
+            return (
+              <li class="areas-index__item" data-reveal="fade">
+                <a href={`/atuacao/${area.slug}/`} class="areas-index__link">
+                  <span class="index">{area.index}</span>
+                  <h2 class="areas-index__name">{area.h1}</h2>
+                  <p class="areas-index__lead">{area.lead}</p>
+                  <ul class="areas-index__topics small muted" role="list">
+                    {area.topics.slice(0, 4).map((t) => (
+                      <li>{t}</li>
+                    ))}
+                  </ul>
+                  <p class="areas-index__who small">
+                    <span class="muted">Responsável:</span> {people}
+                  </p>
+                  <span class="areas-index__cta">
+                    Entender como funciona <span class="arrow" aria-hidden="true">→</span>
+                  </span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ol>
+
+      <aside class="areas-note" data-reveal="fade">
+        <h2 class="label">O que não fazemos</h2>
+        <p>
+          O escritório não atua em direito criminal, trabalhista ou tributário contencioso. Quando uma situação exige uma dessas áreas,
+          dizemos isso logo no primeiro contato e indicamos colegas de confiança.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <NextStep
+    title="Não sabe em qual área a sua situação se encaixa?"
+    text="É mais comum do que parece — e não é você quem precisa decidir. Conte o que está acontecendo com as suas palavras; a triagem é feita por nós."
+    cta="Conversar com o escritório"
+  />
+</Base>
+
+<style>
+  .areas-index {
+    display: grid;
+    border-top: 1px solid var(--color-text);
+  }
+  .areas-index__item {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .areas-index__link {
+    display: grid;
+    gap: var(--s-3);
+    padding-block: var(--s-7);
+    text-decoration: none;
+  }
+  .areas-index__name {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    transition: color var(--dur-micro) var(--ease-out);
+  }
+  .areas-index__lead {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    color: var(--color-text-2);
+    max-width: 36ch;
+  }
+  .areas-index__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+  }
+  .areas-index__topics li::before {
+    content: '—';
+    margin-right: 0.4rem;
+    color: var(--color-accent);
+  }
+  .areas-index__cta {
+    display: inline-flex;
+    gap: 0.5rem;
+    margin-top: var(--s-2);
+    font-size: var(--step--1);
+    font-weight: 560;
+  }
+  .areas-index__cta .arrow {
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+  .areas-index__link:hover .areas-index__name {
+    color: var(--color-accent);
+  }
+  .areas-index__link:hover .arrow {
+    transform: translateX(4px);
+  }
+  .areas-note {
+    margin-top: var(--s-8);
+    display: grid;
+    gap: var(--s-3);
+    max-width: 60ch;
+    padding: var(--s-6);
+    background: var(--color-surface);
+  }
+  @media (min-width: 64rem) {
+    .areas-index__link {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+      align-items: baseline;
+    }
+    .areas-index__link > .index {
+      grid-column: 1;
+    }
+    .areas-index__name {
+      grid-column: 2 / span 5;
+    }
+    .areas-index__lead {
+      grid-column: 8 / span 5;
+    }
+    .areas-index__topics,
+    .areas-index__who,
+    .areas-index__cta {
+      grid-column: 8 / span 5;
+    }
+  }
+</style>

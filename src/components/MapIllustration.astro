@@ -1,0 +1,126 @@
+---
+/**
+ * Mapa ilustrativo, em SVG, sem requisições externas: a malha ortogonal
+ * das ruas cortada pelas avenidas em diagonal, dentro do contorno da área
+ * central — a assinatura do plano urbano de Belo Horizonte. O endereço
+ * exato fica no texto ao lado e no link "Como chegar".
+ */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+const streets: string[] = [];
+for (let i = -12; i <= 24; i++) {
+  const o = i * 34;
+  streets.push(`M${o} -40 L${o} 440`);
+  streets.push(`M-40 ${o} L520 ${o}`);
+}
+const avenues: string[] = [];
+for (let i = -6; i <= 10; i++) {
+  const o = i * 96;
+  avenues.push(`M${o} 0 L${o + 440} 440`);
+  avenues.push(`M${o + 440} 0 L${o} 440`);
+}
+---
+
+<svg class:list={['map', className]} viewBox="0 0 480 360" aria-hidden="true" focusable="false">
+  <defs>
+    <clipPath id="map-contorno">
+      <path d="M40 70 C 120 18, 300 8, 410 52 C 470 84, 476 200, 440 268 C 396 340, 210 356, 110 318 C 36 290, 8 150, 40 70 Z"></path>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#map-contorno)">
+    <g class="map__streets">{streets.map((d) => <path d={d} />)}</g>
+    <g class="map__avenues">{avenues.map((d) => <path d={d} />)}</g>
+  </g>
+  <path class="map__contorno" d="M40 70 C 120 18, 300 8, 410 52 C 470 84, 476 200, 440 268 C 396 340, 210 356, 110 318 C 36 290, 8 150, 40 70 Z"></path>
+  <text x="304" y="232" class="map__district">Funcionários</text>
+  <g class="map__pin" transform="translate(270 176)">
+    <circle r="22" class="map__pin-halo"></circle>
+    <circle r="6"></circle>
+  </g>
+  <line x1="264" y1="170" x2="206" y2="128" class="map__leader"></line>
+  <text x="200" y="124" text-anchor="end" class="map__label">Quintela Brandt · 6º andar</text>
+  <g class="map__north" transform="translate(448 322)">
+    <path d="M0 -14 L5 4 L0 0 L-5 4 Z"></path>
+    <text y="18" text-anchor="middle">N</text>
+  </g>
+  <g class="map__scale" transform="translate(32 330)">
+    <line x1="0" y1="0" x2="68" y2="0"></line>
+    <line x1="0" y1="-4" x2="0" y2="4"></line>
+    <line x1="68" y1="-4" x2="68" y2="4"></line>
+    <text x="0" y="-9">200 m</text>
+  </g>
+</svg>
+
+<style>
+  .map {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .map__streets path {
+    stroke: var(--color-rule);
+    stroke-width: 0.8;
+    fill: none;
+  }
+  .map__avenues path {
+    stroke: var(--color-border);
+    stroke-width: 1.6;
+    fill: none;
+  }
+  .map__contorno {
+    fill: none;
+    stroke: var(--color-text-2);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 4;
+  }
+  .map__district {
+    fill: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .map__pin circle {
+    fill: var(--color-accent);
+  }
+  .map__pin .map__pin-halo {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1;
+    opacity: 0.6;
+  }
+  .map__leader {
+    stroke: var(--color-text-2);
+    stroke-width: 0.8;
+  }
+  .map__label,
+  .map__district {
+    paint-order: stroke;
+    stroke: var(--color-bg);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+  }
+  .map__label {
+    fill: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .map__north path {
+    fill: var(--color-text-2);
+  }
+  .map__north text,
+  .map__scale text {
+    fill: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .map__scale line {
+    stroke: var(--color-text-2);
+    stroke-width: 1;
+  }
+</style>

@@ -1,0 +1,69 @@
+---
+/**
+ * Fechamento das páginas internas: o próximo passo muda conforme o contexto
+ * (área, pessoa, artigo), nunca o mesmo botão repetido.
+ */
+import { whatsappUrl } from '@/data/site';
+interface Props {
+  title: string;
+  text: string;
+  cta: string;
+  href?: string;
+  topic?: string;
+  secondary?: { label: string; href: string };
+}
+const { title, text, cta, href = '/contato/', topic, secondary } = Astro.props;
+---
+
+<section class="next-step" data-surface="ink" aria-labelledby="next-step-title">
+  <div class="container next-step__grid">
+    <p class="label label--accent">Próximo passo</p>
+    <h2 id="next-step-title" class="next-step__title" data-reveal="lines">{title}</h2>
+    <p class="next-step__text">{text}</p>
+    <div class="next-step__actions">
+      <a class="btn btn--accent btn--lg" href={href}><span class="btn-label">{cta}</span><span class="arrow" aria-hidden="true">→</span></a>
+      <a class="arrow-link" href={whatsappUrl(topic)} rel="noopener"><span>Conversar pelo WhatsApp</span><span class="arrow" aria-hidden="true">↗</span></a>
+      {secondary && <a class="arrow-link" href={secondary.href}><span>{secondary.label}</span><span class="arrow" aria-hidden="true">→</span></a>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .next-step {
+    padding-block: var(--section);
+  }
+  .next-step__grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .next-step__title {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    max-width: 20ch;
+  }
+  .next-step__text {
+    color: var(--color-text-2);
+    max-width: 50ch;
+  }
+  .next-step__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4) var(--s-6);
+    margin-top: var(--s-4);
+  }
+  .next-step .arrow-link {
+    color: var(--color-text);
+  }
+  @media (min-width: 64rem) {
+    .next-step__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .next-step__grid > * {
+      grid-column: 1 / span 9;
+    }
+  }
+</style>

@@ -1,0 +1,128 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import LegalDoc from '@/components/LegalDoc.astro';
+import { SITE, fullAddress } from '@/data/site';
+import { breadcrumbs, webPage } from '@/lib/schema';
+
+const path = '/politica-de-privacidade/';
+const title = 'Política de privacidade';
+const description =
+  'Como o escritório Quintela Brandt trata os dados pessoais recebidos pelo site, WhatsApp, telefone e e-mail, conforme a Lei Geral de Proteção de Dados (LGPD).';
+const crumbs = [{ name: 'Política de privacidade', href: path }];
+const sections = [
+  { id: 'controlador', title: 'Quem trata os seus dados' },
+  { id: 'dados', title: 'Quais dados recebemos' },
+  { id: 'finalidade', title: 'Para que usamos' },
+  { id: 'bases', title: 'Bases legais' },
+  { id: 'sensiveis', title: 'Dados sensíveis' },
+  { id: 'compartilhamento', title: 'Compartilhamento' },
+  { id: 'retencao', title: 'Por quanto tempo guardamos' },
+  { id: 'seguranca', title: 'Segurança e sigilo' },
+  { id: 'direitos', title: 'Seus direitos' },
+  { id: 'encarregado', title: 'Encarregado' },
+  { id: 'alteracoes', title: 'Alterações' },
+];
+---
+
+<Base title={title} description={description} schema={[webPage(path, title, description), breadcrumbs(crumbs)]}>
+  <PageHeader
+    crumbs={crumbs}
+    label="Privacidade"
+    title="Política de privacidade"
+    lead="O que acontece com os dados que você compartilha com o escritório — escrito para ser lido, não apenas para existir."
+    compact
+  />
+
+  <LegalDoc sections={sections} updated="1º de setembro de 2026">
+    <h2 id="controlador">Quem trata os seus dados</h2>
+    <p>
+      O controlador dos dados pessoais tratados por meio deste site é {SITE.legalName}{SITE.cnpj && `, inscrita no CNPJ sob o nº ${SITE.cnpj}`}, com sede em
+      {' '}{fullAddress}. Para qualquer assunto relacionado a esta política, escreva para <a href={`mailto:${SITE.privacyEmail}`}>{SITE.privacyEmail}</a>.
+    </p>
+
+    <h2 id="dados">Quais dados recebemos</h2>
+    <p><strong>Pelo formulário de contato:</strong> nome, forma de contato preferida, telefone ou e-mail, assunto e a mensagem que você escrever.</p>
+    <p><strong>Por WhatsApp, telefone ou e-mail:</strong> os dados que você decidir nos enviar por esses canais.</p>
+    <p>
+      <strong>Durante a navegação:</strong> este site não utiliza cookies de publicidade, ferramentas de análise de audiência nem rastreadores de
+      terceiros. O serviço de hospedagem pode registrar dados técnicos de acesso — como endereço IP, data, hora e tipo de navegador — em
+      registros de segurança mantidos por período limitado.
+    </p>
+
+    <h2 id="finalidade">Para que usamos</h2>
+    <ul>
+      <li>Responder ao seu contato e entender, de forma preliminar, o assunto.</li>
+      <li>Agendar a reunião de análise com o advogado responsável.</li>
+      <li>Caso você contrate o escritório, prestar os serviços jurídicos contratados, nos termos do contrato de honorários.</li>
+    </ul>
+    <p>Não usamos seus dados para envio de publicidade, newsletters ou qualquer finalidade diferente das descritas acima.</p>
+
+    <h2 id="bases">Bases legais</h2>
+    <p>
+      Tratamos dados pessoais com fundamento na Lei nº 13.709/2018 (LGPD), em especial: o seu consentimento, manifestado no formulário
+      (art. 7º, I); a execução de procedimentos preliminares relacionados a um contrato, a seu pedido (art. 7º, V); o cumprimento de
+      obrigações legais e regulatórias (art. 7º, II); o exercício regular de direitos (art. 7º, VI); e o legítimo interesse na segurança
+      do site (art. 7º, IX).
+    </p>
+
+    <h2 id="sensiveis">Dados sensíveis</h2>
+    <p>
+      Pedimos que você não envie pelo formulário informações sobre saúde, documentos ou outros dados sensíveis. Se forem necessários para
+      a análise do seu caso, serão tratados na reunião de análise ou por meio seguro, com os cuidados adicionais exigidos pelo art. 11
+      da LGPD.
+    </p>
+
+    <h2 id="compartilhamento">Compartilhamento</h2>
+    <p>
+      Não vendemos nem cedemos dados pessoais. O compartilhamento ocorre apenas com prestadores de serviço indispensáveis ao funcionamento
+      do escritório — como hospedagem do site, serviço de e-mail e processamento do formulário —, que atuam sob obrigação de
+      confidencialidade, e com autoridades públicas quando houver determinação legal.
+    </p>
+    <p>
+      Ao falar conosco pelo WhatsApp, aplicam-se também os termos e a política de privacidade do próprio aplicativo, sobre os quais o
+      escritório não tem controle.
+    </p>
+
+    <h2 id="retencao">Por quanto tempo guardamos</h2>
+    <p>
+      Dados de contatos que não resultem em contratação são mantidos por até 12 meses e depois eliminados. Dados de clientes são mantidos
+      pelo tempo necessário à prestação dos serviços e ao cumprimento de prazos legais, regulatórios e prescricionais.
+    </p>
+
+    <h2 id="seguranca">Segurança e sigilo</h2>
+    <p>
+      Adotamos medidas técnicas e administrativas para proteger os dados contra acessos não autorizados e situações acidentais ou
+      ilícitas. Além disso, tudo o que você nos relata está protegido pelo sigilo profissional previsto no Estatuto da Advocacia (Lei nº
+      8.906/1994) e no Código de Ética e Disciplina da OAB — desde o primeiro contato, mesmo que não haja contratação.
+    </p>
+
+    <h2 id="direitos">Seus direitos</h2>
+    <p>Nos termos do art. 18 da LGPD, você pode, a qualquer momento, solicitar:</p>
+    <ul>
+      <li>confirmação da existência de tratamento e acesso aos seus dados;</li>
+      <li>correção de dados incompletos, inexatos ou desatualizados;</li>
+      <li>anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade com a lei;</li>
+      <li>portabilidade, nos termos da regulamentação;</li>
+      <li>informação sobre com quem os dados foram compartilhados;</li>
+      <li>eliminação dos dados tratados com base no consentimento e revogação do consentimento.</li>
+    </ul>
+    <p>
+      Para exercer qualquer desses direitos, escreva para <a href={`mailto:${SITE.privacyEmail}`}>{SITE.privacyEmail}</a>. Respondemos em até
+      15 dias. Você também pode apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD).
+    </p>
+
+    <h2 id="encarregado">Encarregado</h2>
+    <p>
+      O encarregado pelo tratamento de dados pessoais do escritório é {SITE.dpo.name}, que pode ser contatado pelo e-mail <a
+        href={`mailto:${SITE.privacyEmail}`}>{SITE.privacyEmail}</a
+      >.
+    </p>
+
+    <h2 id="alteracoes">Alterações</h2>
+    <p>
+      Esta política pode ser atualizada para refletir mudanças legais ou nos nossos procedimentos. A data da última atualização está sempre
+      indicada nesta página.
+    </p>
+  </LegalDoc>
+</Base>

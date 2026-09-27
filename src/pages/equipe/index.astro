@@ -1,0 +1,100 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import TeamCard from '@/components/TeamCard.astro';
+import NextStep from '@/components/NextStep.astro';
+import { TEAM } from '@/data/team';
+import { SITE } from '@/data/site';
+import { breadcrumbs, webPage, abs } from '@/lib/schema';
+
+const path = '/equipe/';
+const title = 'Equipe';
+const description =
+  'Conheça Helena Quintela, Otávio Brandt e Beatriz Nóbrega, os advogados do escritório Quintela Brandt, em Belo Horizonte, e as áreas que cada um conduz.';
+const crumbs = [{ name: 'Equipe', href: path }];
+---
+
+<Base
+  title={title}
+  description={description}
+  schema={[
+    webPage(path, title, description, 'CollectionPage', { hasPart: TEAM.map((l) => ({ '@id': abs(`/equipe/${l.slug}/#person`) })) }),
+    breadcrumbs(crumbs),
+  ]}
+>
+  <PageHeader
+    crumbs={crumbs}
+    label="Equipe"
+    title="Três advogados. *Um* responsável por caso."
+    lead="Um escritório pequeno de propósito. Cada caso tem um advogado responsável desde a reunião de análise até o encerramento — e você sabe exatamente com quem falar."
+  />
+
+  <section class="section">
+    <div class="container team-page__grid">
+      {TEAM.map((lawyer) => <TeamCard lawyer={lawyer} headingLevel="h2" />)}
+    </div>
+  </section>
+
+  <section class="section section--tight team-support" aria-labelledby="support-title">
+    <div class="container team-support__grid">
+      <p class="label label--accent">Atendimento</p>
+      <div class="team-support__body" data-reveal="fade">
+        <h2 id="support-title" class="h3">{SITE.intake.name}</h2>
+        <p class="small muted">{SITE.intake.role}</p>
+        <p>
+          É quem responde o seu primeiro contato, entende brevemente o assunto, indica o advogado responsável e organiza a agenda das
+          reuniões. Não dá orientação jurídica — mas garante que a sua mensagem chegue à pessoa certa, {SITE.responseTime}.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <NextStep
+    title="Não precisa escolher o advogado."
+    text="Na triagem, indicamos quem tem mais proximidade com o seu caso. Se ele envolver mais de uma área, os advogados atuam juntos, com um responsável definido."
+    cta="Conversar com o escritório"
+  />
+</Base>
+
+<style>
+  .team-page__grid {
+    display: grid;
+    gap: var(--s-8) var(--gutter);
+  }
+  .team-support {
+    border-top: 1px solid var(--color-rule);
+  }
+  .team-support__grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .team-support__body {
+    display: grid;
+    gap: var(--s-2);
+    max-width: 56ch;
+  }
+  .team-support__body p:last-child {
+    margin-top: var(--s-3);
+    color: var(--color-text-2);
+  }
+  @media (min-width: 40rem) {
+    .team-page__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .team-page__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .team-support__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .team-support__grid > .label {
+      grid-column: 1 / span 3;
+    }
+    .team-support__body {
+      grid-column: 4 / span 7;
+    }
+  }
+</style>

@@ -1,0 +1,529 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import FaqList from '@/components/FaqList.astro';
+import ArticleRow from '@/components/ArticleRow.astro';
+import NextStep from '@/components/NextStep.astro';
+import Portrait from '@/components/Portrait.astro';
+import { AREAS, type Area } from '@/data/areas';
+import { TEAM } from '@/data/team';
+import { getArticles } from '@/lib/articles';
+import { breadcrumbs, faqPage, service, webPage } from '@/lib/schema';
+
+export function getStaticPaths() {
+  return AREAS.map((area) => ({ params: { slug: area.slug }, props: { area } }));
+}
+
+const { area } = Astro.props as { area: Area };
+const path = `/atuacao/${area.slug}/`;
+const lawyers = area.lawyers.map((slug) => TEAM.find((l) => l.slug === slug)!).filter(Boolean);
+const articles = (await getArticles()).filter((a) => a.data.area === area.slug || (area.slug === 'sucessoes' && a.id === 'herdei-imovel-com-irmaos'));
+const others = AREAS.filter((a) => a.slug !== area.slug);
+const crumbs = [
+  { name: 'Atuação', href: '/atuacao/' },
+  { name: area.name, href: path },
+];
+---
+
+<Base
+  title={area.seoTitle}
+  description={area.metaDescription}
+  ogImage={`/og/atuacao-${area.slug}.png`}
+  schema={[webPage(path, area.h1, area.metaDescription), breadcrumbs(crumbs), service(area), faqPage(path, area.faqs)]}
+>
+  <PageHeader crumbs={crumbs} label={`${area.index} · Área de atuação`} title={area.h1} lead={area.lead}>
+    <div class="area-aside">
+      <p class="label">{lawyers.length > 1 ? 'Responsáveis pela área' : 'Responsável pela área'}</p>
+      <ul role="list">
+        {lawyers.map((l) => <li><a href={`/equipe/${l.slug}/`}>{l.name}</a></li>)}
+      </ul>
+      <a class="btn" href={`/contato/?assunto=${area.formValue}`}>
+        <span class="btn-label">Conversar sobre {area.name.toLowerCase()}</span><span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </PageHeader>
+
+  <section class="section area-intro" aria-labelledby="intro-title">
+    <div class="container area-intro__grid">
+      <h2 id="intro-title" class="label label--accent">O ponto de partida</h2>
+      <p class="area-intro__text" data-reveal="fade">{area.intro}</p>
+      <div class="area-intro__for" data-reveal="fade">
+        <h3 class="label">Para quem</h3>
+        <p>{area.forWhom}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section area-situations" aria-labelledby="sit-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="label label--accent">Situações</p>
+        <h2 id="sit-title" class="h2 section-head__title" data-reveal="lines">Quando costumam nos procurar</h2>
+      </div>
+      <ul class="quotes" role="list">
+        {
+          area.situations.map((s, i) => (
+            <li data-reveal="fade">
+              <span class="index">{String(i + 1).padStart(2, '0')}</span>
+              <p>
+                <span aria-hidden="true">“</span>
+                {s}
+                <span aria-hidden="true">”</span>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section area-scope" aria-labelledby="scope-title">
+    <div class="container area-scope__grid">
+      <div class="area-scope__head">
+        <p class="label label--accent">Escopo</p>
+        <h2 id="scope-title" class="h2" data-reveal="lines">O que costuma envolver</h2>
+        <p class="muted small">
+          Uma lista, não um cardápio: muitos casos envolvem mais de um tema — e alguns envolvem mais de uma área do escritório.
+        </p>
+      </div>
+      <ol class="topics" role="list">
+        {
+          area.topics.map((t, i) => (
+            <li data-reveal="fade">
+              <span class="index">{String(i + 1).padStart(2, '0')}</span>
+              <span>{t}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section area-approach" aria-labelledby="approach-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="label label--accent">Método</p>
+        <h2 id="approach-title" class="h2 section-head__title" data-reveal="lines">Como conduzimos</h2>
+      </div>
+      <ol class="approach" role="list">
+        {
+          area.approach.map((step, i) => (
+            <li>
+              <span class="rule rule--strong" data-reveal="rule" aria-hidden="true" />
+              <span class="index">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="h3">{step.title}</h3>
+              <p class="muted">{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="area-approach__link">
+        <a class="arrow-link" href="/como-trabalhamos/"><span>Como funciona o atendimento, do primeiro contato ao Mapa do Caso</span><span class="arrow" aria-hidden="true">→</span></a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section area-docs" aria-labelledby="docs-title">
+    <div class="container area-docs__grid">
+      <div>
+        <p class="label label--accent">Documentos</p>
+        <h2 id="docs-title" class="h3 area-docs__title">O que ajuda ter em mãos na reunião de análise</h2>
+        <p class="small muted">Não é preciso ter nada disso para o primeiro contato. Se algo estiver faltando, a própria reunião ajuda a descobrir como obter.</p>
+      </div>
+      <ul class="checklist" role="list" data-reveal="fade">
+        {area.documents.map((d) => <li>{d}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section area-people" aria-labelledby="people-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="label label--accent">Equipe</p>
+        <h2 id="people-title" class="h2 section-head__title" data-reveal="lines">Quem conduz</h2>
+      </div>
+      <div class="people">
+        {
+          lawyers.map((l) => (
+            <article class="person">
+              <div class="person__media">
+                <Portrait lawyer={l} reveal />
+              </div>
+              <div class="person__body">
+                <p class="label">{l.role}</p>
+                <h3 class="h3">
+                  <a href={`/equipe/${l.slug}/`}>{l.name}</a>
+                </h3>
+                <p class="muted">{l.summary}</p>
+                <blockquote class="person__quote">“{l.quote}”</blockquote>
+                <a class="arrow-link" href={`/equipe/${l.slug}/`}>
+                  <span>Conhecer a trajetória de {l.firstName}</span>
+                  <span class="arrow" aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section area-faq" aria-labelledby="afaq-title">
+    <div class="container area-faq__grid">
+      <div>
+        <p class="label label--accent">Dúvidas</p>
+        <h2 id="afaq-title" class="h2" data-reveal="lines">Perguntas sobre {area.name.toLowerCase()}</h2>
+        <p class="small muted area-faq__note">Respostas gerais. A orientação para o seu caso depende da análise dos fatos e documentos.</p>
+      </div>
+      <FaqList items={area.faqs} name={`faq-${area.slug}`} />
+    </div>
+  </section>
+
+  {
+    articles.length > 0 && (
+      <section class="section section--tight area-articles" aria-labelledby="aart-title">
+        <div class="container">
+          <div class="section-head">
+            <p class="label label--accent">Artigos</p>
+            <h2 id="aart-title" class="h2 section-head__title">Para ler antes da conversa</h2>
+          </div>
+          <div class="area-articles__list">
+            {articles.map((a) => (
+              <ArticleRow article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <nav class="section section--tight other-areas" aria-labelledby="other-title">
+    <div class="container">
+      <h2 id="other-title" class="label">Outras áreas do escritório</h2>
+      <ul role="list">
+        {
+          others.map((o) => (
+            <li>
+              <a href={`/atuacao/${o.slug}/`}>
+                <span class="index">{o.index}</span>
+                <span class="other-areas__name">{o.name}</span>
+                <span class="other-areas__lead small muted">{o.lead}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+
+  <NextStep
+    title={`Quer conversar sobre ${area.topic}?`}
+    text="Conte, em poucas palavras, o que está acontecendo. Respondemos em até um dia útil para entender o assunto e agendar a reunião com quem vai conduzir o caso."
+    cta="Agendar uma conversa"
+    href={`/contato/?assunto=${area.formValue}`}
+    topic={area.topic}
+  />
+</Base>
+
+<style>
+  .area-aside {
+    display: grid;
+    gap: var(--s-3);
+    justify-items: start;
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--color-text);
+  }
+  .area-aside ul {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    margin-bottom: var(--s-3);
+  }
+  .area-aside a:not(.btn) {
+    text-decoration: none;
+  }
+  .area-aside a:not(.btn):hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .area-intro__grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .area-intro__text {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    max-width: 30ch;
+  }
+  .area-intro__for {
+    display: grid;
+    gap: var(--s-3);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--color-rule);
+    color: var(--color-text-2);
+    max-width: 44ch;
+  }
+
+  .area-situations {
+    padding-top: 0;
+  }
+  .quotes {
+    display: grid;
+    border-top: 1px solid var(--color-text);
+  }
+  .quotes li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--s-3);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--color-rule);
+    align-items: baseline;
+  }
+  .quotes p {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--step-2);
+    line-height: 1.3;
+    max-width: 40ch;
+  }
+
+  .area-scope {
+    background: var(--color-surface);
+  }
+  .area-scope__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .area-scope__head {
+    display: grid;
+    gap: var(--s-4);
+    align-content: start;
+  }
+  .area-scope__head p.muted {
+    max-width: 36ch;
+  }
+  .topics {
+    display: grid;
+    border-top: 1px solid var(--color-text);
+  }
+  .topics li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--s-3);
+    padding-block: var(--s-4);
+    border-bottom: 1px solid var(--color-rule);
+    font-size: var(--step-1);
+    align-items: baseline;
+  }
+
+  .approach {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+  }
+  .approach li {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+  }
+  .approach .rule {
+    margin-bottom: var(--s-3);
+  }
+  .approach p {
+    font-size: var(--step--1);
+    max-width: 40ch;
+  }
+  .area-approach__link {
+    margin-top: var(--s-7);
+  }
+
+  .area-docs {
+    padding-top: 0;
+  }
+  .area-docs__grid {
+    display: grid;
+    gap: var(--s-6);
+    padding: clamp(1.5rem, 4vw, 3.5rem);
+    border: 1px solid var(--color-rule);
+  }
+  .area-docs__grid > div {
+    display: grid;
+    gap: var(--s-4);
+    align-content: start;
+  }
+  .area-docs__title {
+    max-width: 22ch;
+  }
+  .area-docs__grid p {
+    max-width: 44ch;
+  }
+  .checklist {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .checklist li {
+    position: relative;
+    padding-left: 2rem;
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 1px solid var(--color-border);
+  }
+
+  .people {
+    display: grid;
+    gap: var(--s-8);
+  }
+  .person {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .person__media {
+    max-width: 22rem;
+  }
+  .person__body {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    max-width: 52ch;
+  }
+  .person__body h3 a {
+    text-decoration: none;
+  }
+  .person__body h3 a:hover {
+    color: var(--color-accent);
+  }
+  .person__quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--step-1);
+    line-height: 1.45;
+    padding-left: var(--s-4);
+    border-left: 1px solid var(--color-accent);
+    margin-block: var(--s-3);
+  }
+
+  .area-faq__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .area-faq__grid > div:first-child {
+    display: grid;
+    gap: var(--s-4);
+    align-content: start;
+  }
+  .area-faq__note {
+    max-width: 34ch;
+  }
+  .area-articles__list {
+    border-top: 1px solid var(--color-text);
+  }
+
+  .other-areas {
+    border-top: 1px solid var(--color-rule);
+  }
+  .other-areas ul {
+    display: grid;
+    margin-top: var(--s-5);
+    border-top: 1px solid var(--color-text);
+  }
+  .other-areas li {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .other-areas a {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--s-1) var(--s-3);
+    padding-block: var(--s-4);
+    text-decoration: none;
+    align-items: baseline;
+  }
+  .other-areas__name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    transition: color var(--dur-micro) var(--ease-out);
+  }
+  .other-areas__lead {
+    grid-column: 2;
+  }
+  .other-areas a:hover .other-areas__name {
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 48rem) {
+    .approach {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .person {
+      grid-template-columns: minmax(0, 18rem) 1fr;
+      gap: var(--s-7);
+    }
+  }
+  @media (min-width: 64rem) {
+    .area-intro__grid,
+    .area-scope__grid,
+    .area-faq__grid,
+    .area-docs__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .area-intro__grid > h2 {
+      grid-column: 1 / span 3;
+      padding-top: 0.8rem;
+    }
+    .area-intro__text {
+      grid-column: 4 / span 6;
+    }
+    .area-intro__for {
+      grid-column: 10 / span 3;
+      align-self: end;
+    }
+    .area-scope__head {
+      grid-column: 1 / span 4;
+    }
+    .topics {
+      grid-column: 6 / span 7;
+    }
+    .approach {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .area-docs__grid > div {
+      grid-column: 1 / span 5;
+    }
+    .checklist {
+      grid-column: 7 / span 6;
+    }
+    .area-faq__grid > div:first-child {
+      grid-column: 1 / span 4;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+      align-self: start;
+    }
+    .area-faq__grid > :global(.faq) {
+      grid-column: 6 / span 7;
+    }
+    .other-areas ul {
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: var(--gutter);
+      border-top: 0;
+    }
+    .other-areas li {
+      border-top: 1px solid var(--color-text);
+      border-bottom: 0;
+    }
+    .other-areas a {
+      grid-template-columns: 1fr;
+    }
+    .other-areas__lead {
+      grid-column: 1;
+    }
+  }
+</style>

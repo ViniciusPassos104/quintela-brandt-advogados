@@ -1,0 +1,178 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import ContactForm from '@/components/ContactForm.astro';
+import ContactChannels from '@/components/ContactChannels.astro';
+import MapIllustration from '@/components/MapIllustration.astro';
+import { SITE, fullAddress, mapsUrl } from '@/data/site';
+import { breadcrumbs, webPage, ORG_ID } from '@/lib/schema';
+
+const path = '/contato/';
+const title = 'Contato';
+const description =
+  'Fale com o escritório Quintela Brandt por WhatsApp, telefone, e-mail ou formulário. Respondemos em até um dia útil. Funcionários, Belo Horizonte, e atendimento por vídeo.';
+const crumbs = [{ name: 'Contato', href: path }];
+---
+
+<Base title={title} description={description} fullOrg schema={[webPage(path, title, description, 'ContactPage', { about: { '@id': ORG_ID } }), breadcrumbs(crumbs)]}>
+  <PageHeader
+    crumbs={crumbs}
+    label="Contato"
+    title="O primeiro passo é *uma conversa*."
+    lead={`Conte, em poucas palavras, o que está acontecendo. Respondemos ${SITE.responseTime} — e nada do que você disser obriga você a contratar o escritório.`}
+    compact
+  />
+
+  <section class="section contact" aria-label="Formas de contato">
+    <div class="container contact__grid">
+      <div class="contact__form">
+        <h2 class="h3 contact__title">Escreva para nós</h2>
+        <ContactForm />
+      </div>
+
+      <div class="contact__side">
+        <div class="contact__block">
+          <h2 class="label">Se preferir, fale direto</h2>
+          <ContactChannels />
+        </div>
+
+        <div class="contact__block contact__after">
+          <h2 class="label">O que acontece depois</h2>
+          <ol role="list">
+            <li><span class="index">01</span><p>{SITE.intake.name}, que coordena o atendimento, responde {SITE.responseTime} para entender o assunto.</p></li>
+            <li><span class="index">02</span><p>Se for algo em que podemos ajudar, ela agenda a reunião de análise com o advogado responsável.</p></li>
+            <li><span class="index">03</span><p>Depois da reunião, você recebe o Mapa do Caso — e decide, com calma, se quer seguir.</p></li>
+          </ol>
+          <a class="arrow-link" href="/como-trabalhamos/"><span>Ver o método completo</span><span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section location" aria-labelledby="loc-title">
+    <div class="container location__grid">
+      <div class="location__text">
+        <p class="label label--accent">Localização</p>
+        <h2 id="loc-title" class="h2" data-reveal="lines">Onde estamos</h2>
+        <address class="location__address">
+          <p class="location__street">{SITE.address.street}, {SITE.address.complement}</p>
+          <p>{SITE.address.district} · {SITE.address.city}/{SITE.address.state} · CEP {SITE.address.postalCode}</p>
+        </address>
+        <dl class="location__facts">
+          <div><dt>Horário</dt><dd>{SITE.hours.label}</dd></div>
+          <div><dt>Reuniões</dt><dd>Presenciais, com hora marcada, ou por vídeo</dd></div>
+          <div><dt>Acesso</dt><dd>Elevador e rampa na entrada; estacionamentos rotativos nas ruas próximas</dd></div>
+          <div><dt>Outras cidades</dt><dd>Atendimento por vídeo, com o mesmo advogado e o mesmo método</dd></div>
+        </dl>
+        <a class="btn btn--ghost" href={mapsUrl} rel="noopener"><span class="btn-label">Abrir no mapa</span><span class="arrow" aria-hidden="true">↗</span></a>
+      </div>
+      <figure class="location__map" data-reveal="fade">
+        <MapIllustration />
+        <figcaption class="small muted">Mapa ilustrativo. Endereço completo: {fullAddress}.</figcaption>
+      </figure>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact__grid {
+    display: grid;
+    gap: var(--s-9);
+  }
+  .contact__form {
+    display: grid;
+    gap: var(--s-6);
+    align-content: start;
+  }
+  .contact__side {
+    display: grid;
+    gap: var(--s-8);
+    align-content: start;
+  }
+  .contact__block {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .contact__after ol {
+    display: grid;
+    gap: var(--s-4);
+    border-top: 1px solid var(--color-text);
+    padding-top: var(--s-4);
+  }
+  .contact__after li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: var(--s-2);
+    align-items: baseline;
+    color: var(--color-text-2);
+  }
+  .location {
+    border-top: 1px solid var(--color-rule);
+  }
+  .location__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .location__text {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+    justify-items: start;
+  }
+  .location__street {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.2;
+  }
+  .location__facts {
+    display: grid;
+    width: 100%;
+    border-top: 1px solid var(--color-rule);
+  }
+  .location__facts > div {
+    display: grid;
+    gap: var(--s-1);
+    padding-block: var(--s-3);
+    border-bottom: 1px solid var(--color-rule);
+    font-size: var(--step--1);
+  }
+  .location__facts dt {
+    font-weight: 600;
+  }
+  .location__facts dd {
+    color: var(--color-text-2);
+  }
+  .location__map {
+    display: grid;
+    gap: var(--s-3);
+    align-self: start;
+  }
+  .location__map :global(.map) {
+    border: 1px solid var(--color-rule);
+    padding: var(--s-4);
+  }
+  @media (min-width: 40rem) {
+    .location__facts > div {
+      grid-template-columns: 9rem 1fr;
+    }
+  }
+  @media (min-width: 64rem) {
+    .contact__grid,
+    .location__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .contact__form {
+      grid-column: 1 / span 6;
+    }
+    .contact__side {
+      grid-column: 8 / span 5;
+    }
+    .location__text {
+      grid-column: 1 / span 5;
+    }
+    .location__map {
+      grid-column: 7 / span 6;
+    }
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+/**
+ * Divide um título em palavras para a entrada por máscara (CSS puro).
+ * O texto continua íntegro para leitores de tela e visível desde o 1º frame.
+ * Use *asteriscos* para itálico: "Questões de família raramente são *só* de família."
+ * Pontuação colada a um trecho em itálico ("*conversa*.") fica na mesma palavra.
+ */
+interface Props {
+  text: string;
+  as?: 'h1' | 'h2' | 'p' | 'span';
+  class?: string;
+  id?: string;
+  start?: number;
+}
+const { text, as: Tag = 'h1', class: className, id, start = 0 } = Astro.props;
+
+type Seg = { t: string; em: boolean };
+const words: Seg[][] = [];
+let prevEndsWithSpace = true;
+text.split(/(\*[^*]+\*)/g).forEach((chunk) => {
+  if (!chunk) return;
+  const em = chunk.startsWith('*') && chunk.endsWith('*');
+  const clean = em ? chunk.slice(1, -1) : chunk;
+  // Só cola na palavra anterior quando não há espaço de nenhum dos dois lados.
+  const glued = !prevEndsWithSpace && !/^\s/.test(clean) && words.length > 0;
+  prevEndsWithSpace = /\s$/.test(clean);
+  clean
+    .split(/\s+/)
+    .filter(Boolean)
+    .forEach((w, i) => {
+      if (i === 0 && glued) words[words.length - 1].push({ t: w, em });
+      else words.push([{ t: w, em }]);
+    });
+});
+---
+
+<Tag class={className} id={id}>
+  {
+    words.map((segs, i) => (
+      <>
+        <span class="rise-word">
+          <span style={`--i:${i + start}`}>{segs.map((s) => (s.em ? <em>{s.t}</em> : s.t))}</span>
+        </span>{' '}
+      </>
+    ))
+  }
+</Tag>

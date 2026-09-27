@@ -1,0 +1,104 @@
+---
+import Portrait from './Portrait.astro';
+import type { Lawyer } from '@/data/team';
+import { AREAS } from '@/data/areas';
+interface Props {
+  lawyer: Lawyer;
+  headingLevel?: 'h2' | 'h3';
+}
+const { lawyer, headingLevel: H = 'h3' } = Astro.props;
+const areaNames = lawyer.areas.map((slug) => AREAS.find((a) => a.slug === slug)?.name).filter(Boolean);
+---
+
+<article class="team-card">
+  <div class="team-card__media">
+    <Portrait lawyer={lawyer} reveal />
+    <blockquote class="team-card__quote" aria-hidden="true">
+      <p>“{lawyer.quote}”</p>
+    </blockquote>
+  </div>
+  <div class="team-card__body">
+    <p class="label">{lawyer.role}</p>
+    <H class="team-card__name h3">
+      <a href={`/equipe/${lawyer.slug}/`}>{lawyer.name}</a>
+    </H>
+    <p class="team-card__areas small">{areaNames.join(' · ')}</p>
+    <p class="team-card__summary small muted">{lawyer.summary}</p>
+    <span class="team-card__more" aria-hidden="true">Conhecer a trajetória <span class="arrow">→</span></span>
+  </div>
+</article>
+
+<style>
+  .team-card {
+    position: relative;
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .team-card__media {
+    position: relative;
+    overflow: hidden;
+  }
+  .team-card__quote {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: var(--s-5);
+    background: var(--ink-950);
+    color: var(--inv-100);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--step-0);
+    line-height: 1.45;
+    transform: translateY(101%);
+    transition: transform 520ms var(--ease-out);
+  }
+  .team-card__body {
+    display: grid;
+    gap: var(--s-2);
+  }
+  .team-card__name a {
+    text-decoration: none;
+  }
+  /* o card inteiro é clicável, com um único link real (o nome) */
+  .team-card__name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .team-card__name a:focus-visible {
+    outline: none;
+  }
+  .team-card:has(.team-card__name a:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 6px;
+  }
+  .team-card__areas {
+    color: var(--color-accent);
+    font-weight: 560;
+  }
+  .team-card__summary {
+    max-width: 40ch;
+  }
+  .team-card__more {
+    display: inline-flex;
+    gap: 0.5em;
+    margin-top: var(--s-2);
+    font-size: var(--step--1);
+    font-weight: 560;
+  }
+  .team-card__more .arrow {
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .team-card:hover .team-card__quote,
+    .team-card:has(a:focus-visible) .team-card__quote {
+      transform: translateY(0);
+    }
+    .team-card:hover .team-card__more .arrow {
+      transform: translateX(4px);
+    }
+    .team-card:hover .team-card__name {
+      color: var(--color-accent);
+    }
+  }
+</style>

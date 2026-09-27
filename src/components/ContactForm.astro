@@ -1,0 +1,359 @@
+---
+/**
+ * Formulário de primeiro contato — só o necessário para responder:
+ * nome, canal preferido, contato, assunto e uma descrição breve.
+ * Com PUBLIC_FORM_ENDPOINT definido, os dados são enviados para lá.
+ * Sem endpoint, o envio é simulado no navegador e nada sai da página.
+ */
+import { AREAS } from '@/data/areas';
+import { FORM_ENDPOINT, SITE, whatsappUrl } from '@/data/site';
+---
+
+<div class="cform" data-form-root>
+  <form class="cform__form" novalidate data-contact-form data-endpoint={FORM_ENDPOINT} action={FORM_ENDPOINT || undefined} method="post">
+    <div class="cform__error-summary" data-error-summary tabindex="-1" hidden>
+      <p><strong>Revise os campos indicados</strong> para enviar a mensagem.</p>
+    </div>
+
+    <div class="field">
+      <label for="f-nome" class="field__label">Nome</label>
+      <input id="f-nome" name="nome" type="text" autocomplete="name" required maxlength="120" aria-describedby="f-nome-err" />
+      <p class="field__error" id="f-nome-err" data-error-for="nome"></p>
+    </div>
+
+    <fieldset class="field field--choice">
+      <legend class="field__label">Como prefere que a gente responda?</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="canal" value="whatsapp" checked /> <span>WhatsApp</span></label>
+        <label class="choice"><input type="radio" name="canal" value="telefone" /> <span>Ligação</span></label>
+        <label class="choice"><input type="radio" name="canal" value="email" /> <span>E-mail</span></label>
+      </div>
+    </fieldset>
+
+    <div class="field">
+      <label for="f-contato" class="field__label" data-contact-label>Telefone ou e-mail</label>
+      <input
+        id="f-contato"
+        name="contato"
+        type="text"
+        autocomplete="tel"
+        inputmode="tel"
+        required
+        maxlength="120"
+        aria-describedby="f-contato-hint f-contato-err"
+      />
+      <p class="field__hint" id="f-contato-hint" data-contact-hint>Com DDD, para podermos responder.</p>
+      <p class="field__error" id="f-contato-err" data-error-for="contato"></p>
+    </div>
+
+    <div class="field">
+      <label for="f-assunto" class="field__label">Assunto</label>
+      <div class="select">
+        <select id="f-assunto" name="assunto" required aria-describedby="f-assunto-err">
+          <option value="">Selecione</option>
+          {AREAS.map((a) => <option value={a.formValue}>{a.h1}</option>)}
+          <option value="nao-sei">Não sei ao certo</option>
+        </select>
+      </div>
+      <p class="field__error" id="f-assunto-err" data-error-for="assunto"></p>
+    </div>
+
+    <div class="field">
+      <label for="f-mensagem" class="field__label">O que está acontecendo, em poucas palavras</label>
+      <textarea
+        id="f-mensagem"
+        name="mensagem"
+        rows="5"
+        required
+        minlength="15"
+        maxlength="1500"
+        aria-describedby="f-mensagem-hint f-mensagem-err"></textarea>
+      <div class="field__row">
+        <p class="field__hint" id="f-mensagem-hint">Não é preciso detalhar agora. Evite enviar documentos ou dados sensíveis por aqui.</p>
+        <p class="field__count small muted" aria-hidden="true"><span data-count>0</span>/1500</p>
+      </div>
+      <p class="field__error" id="f-mensagem-err" data-error-for="mensagem"></p>
+    </div>
+
+    <div class="field field--hp" aria-hidden="true">
+      <label for="f-empresa">Empresa</label>
+      <input id="f-empresa" name="empresa" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="field field--consent">
+      <label class="consent">
+        <input type="checkbox" name="consentimento" required aria-describedby="f-consent-err" />
+        <span>
+          Concordo que o escritório use estes dados apenas para responder a este contato, conforme a <a href="/politica-de-privacidade/"
+            >política de privacidade</a
+          >.
+        </span>
+      </label>
+      <p class="field__error" id="f-consent-err" data-error-for="consentimento"></p>
+    </div>
+
+    <div class="cform__submit">
+      <button class="btn btn--lg" type="submit" data-submit>
+        <span class="btn-label">Enviar mensagem</span><span class="arrow" aria-hidden="true">→</span>
+      </button>
+      <p class="small muted">Resposta {SITE.responseTime}. Sigilo profissional desde o primeiro contato.</p>
+    </div>
+
+    <p class="cform__status" role="status" aria-live="polite" data-status></p>
+
+    <noscript>
+      <p class="cform__noscript">
+        Para enviar pelo formulário, é preciso ativar o JavaScript. Você também pode escrever para <a href={`mailto:${SITE.email}`}
+          >{SITE.email}</a
+        > ou ligar para {SITE.phone.display}.
+      </p>
+    </noscript>
+  </form>
+
+  <div class="cform__done" data-done hidden tabindex="-1" aria-labelledby="done-title">
+    <p class="label label--accent">Mensagem recebida</p>
+    <h2 id="done-title" class="h3" data-done-title>Recebemos sua mensagem.</h2>
+    <ol class="cform__next" role="list">
+      <li>
+        <span class="index">01</span>
+        <p>
+          <strong>{SITE.responseTime.replace('em até', 'Em até')}</strong>, {SITE.intake.name} responde <span data-done-channel>pelo canal que você escolheu</span> para entender
+          o assunto.
+        </p>
+      </li>
+      <li>
+        <span class="index">02</span>
+        <p><strong>Se for algo em que podemos ajudar</strong>, ela agenda a reunião de análise com o advogado responsável — presencial ou por vídeo.</p>
+      </li>
+      <li>
+        <span class="index">03</span>
+        <p><strong>Se não for</strong>, dizemos com franqueza e, quando possível, indicamos quem pode ajudar.</p>
+      </li>
+    </ol>
+    <p class="small muted">
+      Se for urgente, você também pode <a href={whatsappUrl()} rel="noopener">escrever pelo WhatsApp</a> ou ligar para <a
+        href={`tel:${SITE.phone.e164}`}>{SITE.phone.display}</a
+      >.
+    </p>
+    <a class="arrow-link" href="/como-trabalhamos/"><span>Enquanto isso, veja como trabalhamos</span><span class="arrow" aria-hidden="true">→</span></a>
+  </div>
+</div>
+
+<style>
+  .cform__form {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .field {
+    display: grid;
+    gap: var(--s-2);
+    border: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .field__label {
+    font-size: var(--step--1);
+    font-weight: 600;
+    padding: 0;
+  }
+  .field input[type='text'],
+  .field input[type='email'],
+  .field input[type='tel'],
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: var(--field-h);
+    padding: 0.8rem 0.95rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    background: #fbf9f4;
+    color: var(--color-text);
+    font-size: 1rem;
+    line-height: 1.4;
+    transition:
+      border-color var(--dur-micro) var(--ease-out),
+      box-shadow var(--dur-micro) var(--ease-out);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 8rem;
+  }
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover {
+    border-color: var(--color-text-2);
+  }
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 1px;
+    border-color: var(--color-text);
+  }
+  .field [aria-invalid='true'] {
+    border-color: var(--color-accent);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+  .select {
+    position: relative;
+  }
+  .select::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+  .field__hint {
+    font-size: var(--step--1);
+    color: var(--color-muted);
+  }
+  .field__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+  }
+  .field__count {
+    flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .field__error {
+    font-size: var(--step--1);
+    font-weight: 560;
+    color: var(--color-accent);
+    min-height: 0;
+  }
+  .field__error:empty {
+    display: none;
+  }
+  .field__error::before {
+    content: '! ';
+    font-weight: 700;
+  }
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin-top: var(--s-1);
+  }
+  .choice {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.9rem;
+    padding: 0 1.1rem 0 0.9rem;
+    border: 1px solid var(--color-border);
+    background: #fbf9f4;
+    cursor: pointer;
+    font-size: var(--step--1);
+    font-weight: 560;
+    transition:
+      border-color var(--dur-micro) var(--ease-out),
+      background-color var(--dur-micro) var(--ease-out);
+  }
+  .choice:hover {
+    border-color: var(--color-text);
+  }
+  .choice input {
+    width: 1.05rem;
+    height: 1.05rem;
+    margin: 0;
+    accent-color: var(--lacre-700);
+  }
+  .choice:has(input:checked) {
+    border-color: var(--color-text);
+    background: var(--color-surface);
+  }
+  .choice:has(input:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .consent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.8rem;
+    align-items: start;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  .consent input {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin: 0.15rem 0 0;
+    accent-color: var(--lacre-700);
+  }
+  .field--hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .cform__submit {
+    display: grid;
+    gap: var(--s-3);
+    justify-items: start;
+  }
+  .cform__status:empty {
+    display: none;
+  }
+  .cform__status {
+    font-weight: 560;
+    color: var(--color-accent);
+  }
+  .cform__error-summary {
+    padding: var(--s-4);
+    border-left: 3px solid var(--color-accent);
+    background: var(--color-surface);
+    font-size: var(--step--1);
+  }
+  .cform__noscript {
+    padding: var(--s-4);
+    background: var(--color-surface);
+    font-size: var(--step--1);
+  }
+  .cform__done {
+    display: grid;
+    gap: var(--s-5);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid var(--color-text);
+    background: #fbf9f4;
+  }
+  .cform__done:focus {
+    outline: none;
+  }
+  .cform__next {
+    display: grid;
+    gap: var(--s-4);
+    border-top: 1px solid var(--color-rule);
+    padding-top: var(--s-4);
+  }
+  .cform__next li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: var(--s-2);
+    align-items: baseline;
+  }
+  .cform__next strong {
+    font-weight: 600;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cform__done:not([hidden]) {
+      animation: fade-up 700ms var(--ease-out) both;
+    }
+  }
+</style>
+
+<script>
+  import { initContactForm } from '@/scripts/form';
+  initContactForm();
+</script>

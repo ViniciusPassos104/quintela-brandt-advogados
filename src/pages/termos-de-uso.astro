@@ -1,0 +1,77 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import LegalDoc from '@/components/LegalDoc.astro';
+import { SITE } from '@/data/site';
+import { breadcrumbs, webPage } from '@/lib/schema';
+
+const path = '/termos-de-uso/';
+const title = 'Termos de uso';
+const description =
+  'Condições de uso do site do escritório Quintela Brandt: natureza informativa do conteúdo, relação com clientes, propriedade intelectual e legislação aplicável.';
+const crumbs = [{ name: 'Termos de uso', href: path }];
+const sections = [
+  { id: 'aceitacao', title: 'Aceitação' },
+  { id: 'natureza', title: 'Natureza do conteúdo' },
+  { id: 'relacao', title: 'Contato e relação com o cliente' },
+  { id: 'publicidade', title: 'Publicidade profissional' },
+  { id: 'propriedade', title: 'Propriedade intelectual' },
+  { id: 'links', title: 'Links externos' },
+  { id: 'disponibilidade', title: 'Disponibilidade' },
+  { id: 'lei', title: 'Legislação e foro' },
+];
+---
+
+<Base title={title} description={description} schema={[webPage(path, title, description), breadcrumbs(crumbs)]}>
+  <PageHeader crumbs={crumbs} label="Termos" title="Termos de uso" lead="As regras de uso deste site, em linguagem direta." compact />
+
+  <LegalDoc sections={sections} updated="1º de setembro de 2026">
+    <h2 id="aceitacao">Aceitação</h2>
+    <p>Ao navegar neste site, você concorda com estes termos. Se não concordar, recomendamos não utilizá-lo.</p>
+
+    <h2 id="natureza">Natureza do conteúdo</h2>
+    <p>
+      Os textos deste site, incluindo os artigos, têm caráter exclusivamente informativo e refletem a legislação vigente na data indicada
+      em cada página. Eles não constituem orientação jurídica para situações concretas, que dependem sempre da análise dos fatos e
+      documentos de cada caso.
+    </p>
+
+    <h2 id="relacao">Contato e relação com o cliente</h2>
+    <p>
+      Enviar uma mensagem pelo site, WhatsApp, telefone ou e-mail não estabelece relação de cliente e advogado. Essa relação só se forma com
+      a assinatura de contrato de honorários. Ainda assim, o sigilo profissional se aplica a tudo o que você nos relatar desde o primeiro
+      contato.
+    </p>
+
+    <h2 id="publicidade">Publicidade profissional</h2>
+    <p>
+      Este site observa o Código de Ética e Disciplina da OAB e o Provimento nº 205/2021 do Conselho Federal da OAB. Por isso, não divulga
+      valores de honorários, resultados de processos, clientes atendidos nem promessas de êxito.
+    </p>
+
+    <h2 id="propriedade">Propriedade intelectual</h2>
+    <p>
+      Textos, marca e identidade visual pertencem a {SITE.legalName}. Citações breves dos artigos são bem-vindas, desde que indiquem a
+      autoria e o link para o texto original.
+    </p>
+
+    <h2 id="links">Links externos</h2>
+    <p>
+      Alguns links levam a serviços de terceiros, como mapas e aplicativos de mensagem. O escritório não se responsabiliza pelo conteúdo ou
+      pelas práticas de privacidade desses serviços.
+    </p>
+
+    <h2 id="disponibilidade">Disponibilidade</h2>
+    <p>
+      Buscamos manter o site disponível e atualizado, mas ele pode passar por interrupções para manutenção ou por fatores fora do nosso
+      controle.
+    </p>
+
+    <h2 id="lei">Legislação e foro</h2>
+    <p>
+      Estes termos são regidos pelas leis brasileiras. Fica eleito o foro da comarca de Belo Horizonte, Minas Gerais, sem prejuízo das
+      regras de competência aplicáveis às relações de consumo.
+    </p>
+    <p>Dúvidas sobre estes termos podem ser enviadas para <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+  </LegalDoc>
+</Base>

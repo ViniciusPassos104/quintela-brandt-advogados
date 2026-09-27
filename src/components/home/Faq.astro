@@ -1,0 +1,50 @@
+---
+import FaqList from '@/components/FaqList.astro';
+import { HOME_FAQ } from '@/data/faq';
+---
+
+<section id="duvidas" class="section home-faq" data-section="duvidas" aria-labelledby="faq-title">
+  <div class="container home-faq__grid">
+    <div class="home-faq__head">
+      <p class="label label--accent">06 · Dúvidas</p>
+      <h2 id="faq-title" class="h2" data-reveal="lines">Perguntas que costumamos ouvir</h2>
+      <p class="muted">
+        Quando a resposta depende do caso, dizemos isso com todas as letras. Para o que não estiver aqui, a primeira conversa serve para
+        isso.
+      </p>
+      <a class="arrow-link" href="/duvidas/"><span>Ver todas as dúvidas</span><span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+    <div class="home-faq__list" data-reveal="fade">
+      <FaqList items={HOME_FAQ} name="faq-home" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-faq__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .home-faq__head {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .home-faq__head p.muted {
+    max-width: 36ch;
+  }
+  @media (min-width: 64rem) {
+    .home-faq__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .home-faq__head {
+      grid-column: 1 / span 4;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+    .home-faq__list {
+      grid-column: 6 / span 7;
+    }
+  }
+</style>

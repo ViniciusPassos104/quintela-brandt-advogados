@@ -1,0 +1,222 @@
+---
+import { AREAS } from '@/data/areas';
+---
+
+<section id="atuacao" class="areas section" data-section="atuacao" aria-labelledby="areas-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="label label--accent">02 · Atuação</p>
+      <div class="section-head__title stack" style="--stack: var(--s-5)">
+        <h2 id="areas-title" class="h2" data-reveal="lines">Em que podemos ajudar</h2>
+        <p class="lead">
+          Quatro áreas, uma mesma lógica: família e patrimônio raramente se separam. Veja as situações que mais chegam até nós — se nenhuma
+          se parecer com a sua, a primeira conversa serve justamente para isso.
+        </p>
+      </div>
+    </div>
+
+    <ul class="explorer" role="list" data-explorer>
+      {
+        AREAS.map((area, i) => (
+          <li class="explorer__item" data-active={i === 0 ? '' : undefined}>
+            <a class="explorer__row" href={`/atuacao/${area.slug}/`} data-explorer-trigger data-reveal="fade">
+              <span class="index">{area.index}</span>
+              <span class="explorer__name">{area.name}</span>
+              <span class="explorer__lead">{area.lead}</span>
+              <span class="explorer__arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+            <div class="explorer__panel">
+              <p class="label">Situações que chegam até nós</p>
+              <ul class="explorer__situations" role="list">
+                {area.situations.map((s, j) => (
+                  <li style={`--j:${j}`}>
+                    <span aria-hidden="true">“</span>
+                    {s}
+                    <span aria-hidden="true">”</span>
+                  </li>
+                ))}
+              </ul>
+              <a class="arrow-link" href={`/atuacao/${area.slug}/`}>
+                <span>Entender como funciona</span>
+                <span class="visually-hidden"> a atuação em {area.name}</span>
+                <span class="arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .explorer {
+    position: relative;
+  }
+  .explorer__item {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .explorer__item:first-child {
+    border-top: 1px solid var(--color-text);
+  }
+  .explorer__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    grid-template-areas:
+      'index name arrow'
+      '. lead lead';
+    align-items: baseline;
+    column-gap: var(--s-3);
+    row-gap: var(--s-2);
+    padding-block: var(--s-5) var(--s-4);
+    text-decoration: none;
+    color: var(--color-text);
+  }
+  .explorer__row .index {
+    grid-area: index;
+  }
+  .explorer__name {
+    grid-area: name;
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .explorer__lead {
+    grid-area: lead;
+    font-size: var(--step--1);
+    color: var(--color-text-2);
+    max-width: 40ch;
+  }
+  .explorer__arrow {
+    grid-area: arrow;
+    font-size: var(--step-1);
+    color: var(--color-accent);
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+  .explorer__row:hover .explorer__arrow {
+    transform: translateX(4px);
+  }
+  .explorer__panel {
+    display: grid;
+    gap: var(--s-4);
+    padding: 0 0 var(--s-6) calc(2.5rem + var(--s-3));
+  }
+  .explorer__situations {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .explorer__situations li {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--step-0);
+    line-height: 1.45;
+    color: var(--color-text);
+    padding-left: var(--s-4);
+    border-left: 1px solid var(--color-accent);
+  }
+
+  /* Desktop com mouse: lista à esquerda, painel da área ativa à direita */
+  @media (min-width: 64rem) {
+    .explorer {
+      min-height: var(--explorer-h, 32rem);
+    }
+    .explorer__item {
+      width: 56%;
+    }
+    .explorer__row {
+      grid-template-columns: 3rem 1fr auto;
+      padding-block: var(--s-6);
+    }
+    .explorer__row::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: -1px;
+      bottom: -1px;
+      width: 2px;
+      background: var(--color-accent);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform var(--dur-ui) var(--ease-out);
+    }
+    .explorer__name {
+      color: var(--color-text-2);
+      transition:
+        color var(--dur-ui) var(--ease-out),
+        transform var(--dur-ui) var(--ease-out);
+    }
+    .explorer__lead {
+      transition: color var(--dur-ui) var(--ease-out);
+    }
+    .explorer__item[data-active] .explorer__row::before {
+      transform: scaleY(1);
+    }
+    .explorer__item[data-active] .explorer__name {
+      color: var(--color-text);
+      transform: translateX(0.6rem);
+    }
+    .explorer__item[data-active] .explorer__lead {
+      color: var(--color-text);
+    }
+    .explorer__arrow {
+      opacity: 0;
+      transition:
+        opacity var(--dur-ui) var(--ease-out),
+        transform var(--dur-ui) var(--ease-out);
+    }
+    .explorer__item[data-active] .explorer__arrow {
+      opacity: 1;
+    }
+    .explorer__panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 38%;
+      padding: var(--s-6) 0 0;
+      border-top: 1px solid var(--color-text);
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition:
+        opacity 180ms var(--ease-in),
+        transform 180ms var(--ease-in),
+        visibility 0s linear 180ms;
+    }
+    .explorer__item[data-active] .explorer__panel {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity 420ms var(--ease-out) 120ms,
+        transform 520ms var(--ease-out) 120ms,
+        visibility 0s;
+    }
+    .explorer__situations li {
+      font-size: var(--step-1);
+      opacity: 0;
+      transform: translateY(10px);
+      transition:
+        opacity 300ms var(--ease-in),
+        transform 300ms var(--ease-in);
+    }
+    .explorer__item[data-active] .explorer__situations li {
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity 600ms var(--ease-out),
+        transform 700ms var(--ease-out);
+      transition-delay: calc(160ms + var(--j) * 70ms);
+    }
+  }
+</style>
+
+<script>
+  import { initExplorer } from '@/scripts/explorer';
+  initExplorer();
+</script>

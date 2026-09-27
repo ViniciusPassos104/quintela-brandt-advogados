@@ -1,0 +1,118 @@
+---
+import MethodTimeline from '@/components/MethodTimeline.astro';
+import { COMMITMENTS } from '@/data/method';
+---
+
+<section id="metodo" class="method section" data-section="metodo" aria-labelledby="method-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="label label--accent">03 · Como trabalhamos</p>
+      <div class="section-head__title stack" style="--stack: var(--s-5)">
+        <h2 id="method-title" class="h2" data-reveal="lines">O que acontece depois que você entra em contato</h2>
+        <p class="lead">
+          Cinco etapas, pensadas para que você saiba, em cada momento, o que está acontecendo e o que vem a seguir. A primeira decisão só é
+          pedida quando você já tem o retrato completo da situação.
+        </p>
+      </div>
+    </div>
+
+    <MethodTimeline />
+
+    <div class="commitments">
+      <h3 class="label">Durante todo o trabalho</h3>
+      <ul role="list" class="commitments__list">
+        {
+          COMMITMENTS.map((c) => (
+            <li>
+              <span class="rule rule--strong" data-reveal="rule" aria-hidden="true" />
+              <h4 class="h4">{c.title}</h4>
+              <p class="small muted">{c.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="method__cta" data-reveal="fade">
+      <p class="method__cta-text">Quer entender como isso se aplicaria à sua situação?</p>
+      <div class="method__cta-actions">
+        <a class="btn" href="/contato/"><span class="btn-label">Falar com o escritório</span><span class="arrow" aria-hidden="true">→</span></a>
+        <a class="arrow-link" href="/como-trabalhamos/"><span>Ver o método em detalhe</span><span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .commitments {
+    margin-top: var(--section);
+    display: grid;
+    gap: var(--s-6);
+  }
+  .commitments__list {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .commitments__list li {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+  }
+  .commitments__list .rule {
+    margin-bottom: var(--s-2);
+  }
+
+  .method__cta {
+    margin-top: var(--s-9);
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--color-rule);
+    display: grid;
+    gap: var(--s-5);
+  }
+  .method__cta-text {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    max-width: 22ch;
+  }
+  .method__cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4) var(--s-6);
+  }
+
+  @media (min-width: 48rem) {
+    .commitments__list {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: var(--gutter);
+    }
+  }
+  @media (min-width: 64rem) {
+    .commitments {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+    }
+    .commitments > .label {
+      grid-column: 1 / span 3;
+      padding-top: 1.5rem;
+    }
+    .commitments__list {
+      grid-column: 4 / span 9;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .method__cta {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--gutter);
+      align-items: end;
+    }
+    .method__cta-text {
+      grid-column: 1 / span 7;
+    }
+    .method__cta-actions {
+      grid-column: 8 / span 5;
+      justify-content: flex-end;
+    }
+  }
+</style>
